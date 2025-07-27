@@ -1,0 +1,29 @@
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+  color-scheme: light dark;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  color: #fff;
+  background-color: #1a1a1a;
+}
+
+button {
+  padding: 5px 10px;
+  border: 1px solid #fff;
+  border-radius: 20px;
+  background-color: #fff;
+  color: #1a1a1a;
+  cursor: pointer;
+}
