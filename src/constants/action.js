@@ -1,0 +1,4 @@
+export const ACTION = {
+  SET_SESSION: 'SET_SESSION',
+  CLOSE_SESSION: 'CLOSE_SESSION',
+}
