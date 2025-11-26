@@ -10,11 +10,16 @@ import { setSession } from '../../actions'
 import { selectUserRole, selectUserLogin } from '../../selectors'
 import { ROLE } from '../../constants'
 
+import styles from './AuthPage.module.sass'
+
 const schema = yup.object().shape({
   login: yup
     .string()
     .required('Введите логин')
-    .matches(/^\w+$/, 'Для имени пользоателя допустимы латинские буквы, цифры и _')
+    .matches(
+      /^\w+$/,
+      'Для имени пользоателя допустимы латинские буквы, цифры и _',
+    )
     .min(3, 'Минимум 3 символа')
     .max(12, 'Максимум 12 символов'),
   password: yup
@@ -27,7 +32,7 @@ const schema = yup.object().shape({
     .min(6, 'Минимум 6 символов'),
 })
 
-export const Auth = () => {
+export const AuthPage = () => {
   // const store = useStore()
   const dispatch = useDispatch()
   const nav = useNavigate()
@@ -61,7 +66,8 @@ export const Auth = () => {
     })
   }
 
-  const errMessage = errors?.login?.message || errors?.password?.message || serverError
+  const errMessage =
+    errors?.login?.message || errors?.password?.message || serverError
 
   if (roleId !== ROLE.GUEST)
     return (
@@ -75,9 +81,20 @@ export const Auth = () => {
     )
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
-      <input type='text' placeholder='Имя пользователя' {...register('login')} />
-      <input type='password' placeholder='Пароль' {...register('password')} />
+    <Form
+      onSubmit={handleSubmit(onSubmit)}
+      className={styles['form-center']}
+    >
+      <input
+        type='text'
+        placeholder='Имя пользователя'
+        {...register('login')}
+      />
+      <input
+        type='password'
+        placeholder='Пароль'
+        {...register('password')}
+      />
 
       <Button type='submit'>Войти</Button>
 
