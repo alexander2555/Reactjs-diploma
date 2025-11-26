@@ -1,7 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Icon, Button } from '../../../../components'
-import { selectUserLogin, selectUserRole, selectUserSession } from '../../../../selectors'
+import {
+  selectUserLogin,
+  selectUserRole,
+  selectUserSession,
+} from '../../../../selectors'
 import { closeSession } from '../../../../actions'
 import { ROLE } from '../../../../constants'
 import styles from './sign-in-out.module.sass'
@@ -21,8 +25,15 @@ export const SignInOut = ({ className }) => {
   return (
     <div className={className}>
       {roleId === ROLE.GUEST ? (
-        <Button className={styles['btn-sign-in-out']} title='Sign In' to='/login'>
-          <Icon iconType='solid' iconName='user' />
+        <Button
+          className={styles['btn-sign-in-out']}
+          title='Sign In'
+          to='/login'
+        >
+          <Icon
+            iconType='solid'
+            iconName='user'
+          />
           &nbsp;Sign In
         </Button>
       ) : (
@@ -33,7 +44,10 @@ export const SignInOut = ({ className }) => {
             title='Sign Out'
             onClick={onSignOut}
           >
-            <Icon iconType='solid' iconName='right-from-bracket' />
+            <Icon
+              iconType='solid'
+              iconName='right-from-bracket'
+            />
           </Button>
         </div>
       )}
