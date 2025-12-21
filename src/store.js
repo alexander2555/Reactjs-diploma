@@ -1,10 +1,5 @@
-import {
-  createStore,
-  combineReducers,
-  applyMiddleware,
-  compose,
-} from 'redux'
-import { thunk } from 'redux-thunk'
+import { createStore, combineReducers, applyMiddleware, compose } from 'redux'
+import { withExtraArgument as thunk } from 'redux-thunk'
 import {
   userReducer,
   docsReducer,
@@ -19,10 +14,7 @@ const reducer = combineReducers({
   graphics: graphicsReducer,
 })
 
-const composerEnhancers =
-  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+const composerEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-export const store = createStore(
-  reducer,
-  composerEnhancers(applyMiddleware(thunk)),
-)
+export const createAppStore = nav =>
+  createStore(reducer, composerEnhancers(applyMiddleware(thunk(nav))))

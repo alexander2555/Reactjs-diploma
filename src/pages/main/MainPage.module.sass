@@ -1,15 +1,49 @@
-.document
+.documents
   &-list
     display: flex
     flex-wrap: wrap
+    align-items: center
+    justify-content: space-around
+    margin: -.5rem
 
   &-item
-    display: block
-    width: 210px
-    height: 297px
-    border: 1px solid var(--text-color)
-    border-radius: 1em
+    width: 25%
+    min-width: 12rem
+    max-width: 20rem
+    flex: 0 0 auto
+    padding: .5rem
+    transition: background-color .3s
+    cursor: pointer
+    &.selected,
+    &:hover
+      background-color: rgba( 255, 255, 255, .2 )
+
+    &__sheet
+      // aspect-ratio: 297 / 210
+      aspect-ratio: 1
+      height: 100%
+      width: 100%
+      padding: .5rem
+      margin: auto
+      border: 1px solid var(--text-color)
+      border-radius: 1em
+
+      display: flex
+      flex-direction: column
+
+    &__title
+      margin-bottom: .5rem
+      text-align: center
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+    &__description
+      margin-top: auto
+      margin-bottom: 0
 
 .btn
   &-del
     margin-top: auto
+
+  &-edit
+    margin-top: .5rem

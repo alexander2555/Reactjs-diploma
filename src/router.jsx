@@ -1,35 +1,47 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { AppLayout } from './layouts/AppLayout'
-import { AuthPage, MainPage, DocumentPage } from './pages'
+import { AppLayout } from './layouts'
+import { AuthPage, MainPage, DocumentPage, RegPage, LibPage } from './pages'
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <AppLayout />,
+    Component: AppLayout,
     children: [
       {
         index: true,
-        element: <MainPage />,
-        handle: { pageTitle: 'Главная' },
+        Component: MainPage,
+        handle: { pageTitle: 'Галерея' },
       },
       {
-        path: '/login',
-        element: <AuthPage />,
+        path: 'login',
+        Component: AuthPage,
         handle: { pageTitle: 'Аутентификация' },
       },
       {
-        path: '/register',
-        element: <div>Register</div>,
+        path: 'register',
+        Component: RegPage,
         handle: { pageTitle: 'Регистрация' },
       },
       {
-        path: '/collage/:id',
-        element: <DocumentPage />,
-        handle: { pageTitle: 'Коллаж' },
+        path: 'document',
+        Component: DocumentPage,
+        handle: { pageTitle: 'Новый коллаж' },
+        children: [
+          {
+            path: ':id',
+            Component: DocumentPage,
+            handle: { pageTitle: '' },
+          },
+        ],
+      },
+      {
+        path: 'library',
+        Component: LibPage,
+        handle: { pageTitle: 'Библиотека' },
       },
       {
         path: '*',
-        element: <div>404 Not Found</div>,
+        Component: <div>404 Not Found</div>,
         handle: { pageTitle: '404' },
       },
     ],

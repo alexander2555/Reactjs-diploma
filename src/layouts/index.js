@@ -1,2 +1,2 @@
-export * from './AppLayout'
-export * from './MainLayout'
+export * from './app-layout/AppLayout'
+export * from './main-layout/MainLayout'

@@ -1,9 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom'
-import stylies from './button.module.sass'
+import cn from 'classnames'
+import styles from './Button.module.sass'
 
-export const Button = ({ className, to, navigate, onClick, children, ...props }) => {
+export const Button = ({
+  className,
+  to,
+  navigate,
+  onClick,
+  children,
+  ...props
+}) => {
   const nav = useNavigate()
-  const classes = stylies.btn + (className ? ` ${className}` : '')
+  const classes = cn([styles.btn, className])
 
   if (to || navigate) {
     const handleClick = e => {
@@ -15,14 +23,24 @@ export const Button = ({ className, to, navigate, onClick, children, ...props })
     }
 
     return (
-      <Link to={to || '#'} className={classes} onClick={handleClick} {...props}>
+      <Link
+        to={to || '#'}
+        className={classes}
+        onClick={handleClick}
+        {...props}
+      >
         {children}
       </Link>
     )
   }
 
   return (
-    <button type='button' className={classes} onClick={onClick} {...props}>
+    <button
+      type='button'
+      className={classes}
+      onClick={onClick}
+      {...props}
+    >
       {children}
     </button>
   )

@@ -1,6 +1,6 @@
-import { ACTION } from '../constants'
+import { ACTION_TYPE } from '../constants'
 
 export const setSession = user => ({
-  type: ACTION.SET_SESSION,
+  type: ACTION_TYPE.SET_SESSION,
   payload: user,
 })

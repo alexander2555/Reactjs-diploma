@@ -1,0 +1,12 @@
+export const getDocs = () =>
+  fetch('http://localhost:3000/documents')
+    .then(resp => {
+      if (resp.ok) {
+        return resp.json()
+      }
+      throw new Error(resp.statusText)
+    })
+    .catch(err => {
+      console.error('[Fetching docs]', err)
+      return []
+    })
