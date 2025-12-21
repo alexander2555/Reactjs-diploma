@@ -1,0 +1,35 @@
+.h1
+  min-width: 30%
+  max-width: 100%
+  border: 1px dotted var(--text-color)
+  border-radius: 50em
+  font-style: italic
+  text-align: center
+  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+
+  &.changed
+    padding: 0 1rem
+    border: 1px dotted var(--edited-color)
+
+.logo
+  margin-right: 10px
+
+  color: #fff
+  font-size: 2rem
+  text-decoration: none
+
+.controls
+  display: flex
+  margin-left: .5rem
+
+.input-title
+  display: block
+  padding: 0 1rem
+  background-color: transparent
+  border-radius: 50em
+  font-size: 2rem
+  outline: none
+  &:focus
+    border: 1px dotted var(--text-color) !important

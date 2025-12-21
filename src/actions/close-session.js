@@ -1,11 +1,10 @@
-import { ACTION } from '../constants'
-import { server } from '../proxy'
+import { ACTION_TYPE } from '../constants'
+import { proxy } from '../proxy'
 
-export const closeSession = hash => {
-  server.signout(hash)
+export const closeSession = () => {
+  proxy.logout()
 
   return {
-    type: ACTION.CLOSE_SESSION,
-    payload: hash,
+    type: ACTION_TYPE.CLOSE_SESSION,
   }
 }

@@ -1,3 +1,23 @@
 .canvas
   border: 1px solid var(--text-color)
   border-radius: 1rem
+
+.elements
+  &-list
+    position: relative
+    display: block
+    width: calc( 100% + 1rem )
+    margin-top: .5rem
+    flex: 1 1 0
+    overflow-y: auto
+
+    scrollbar-gutter: stable
+
+  &-item
+    display: block
+    max-width: 100%
+    margin: 0 0 .5rem
+
+.input
+  &-scale
+    margin-bottom: .5rem

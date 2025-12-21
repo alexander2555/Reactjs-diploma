@@ -1,3 +1,5 @@
+export * from './register/RegPage'
 export * from './auth/AuthPage'
 export * from './main/MainPage'
 export * from './document/DocumentPage'
+export * from './library/LibPage'

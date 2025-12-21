@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { server } from '../../proxy'
-import { Button, Form } from '../../components'
+import { proxy } from '../../proxy'
+import { Button, Form, Input } from '../../components'
 import { setSession } from '../../actions'
-import { selectUserRole, selectUserLogin } from '../../selectors'
+import { selectUserRole } from '../../selectors'
 import { ROLE } from '../../constants'
 
 import styles from './AuthPage.module.sass'
@@ -33,11 +33,9 @@ const schema = yup.object().shape({
 })
 
 export const AuthPage = () => {
-  // const store = useStore()
   const dispatch = useDispatch()
   const nav = useNavigate()
-  const roleId = useSelector(selectUserRole)
-  const login = useSelector(selectUserLogin)
+
   const {
     register,
     handleSubmit,
@@ -51,54 +49,57 @@ export const AuthPage = () => {
     resolver: yupResolver(schema),
   })
 
-  const [serverError, setServerError] = useState(null)
+  const [error, setError] = useState(null)
+
+  const roleId = useSelector(selectUserRole)
+
+  if (roleId !== ROLE.GUEST) {
+    return <Navigate to={'/'} />
+  }
 
   const onSubmit = ({ login, password }) => {
-    server.authorize(login, password).then(({ error, res }) => {
+    proxy.login(login, password).then(({ error, res }) => {
       if (error) {
-        setServerError(`Ошибка сервера: ${error}`)
+        setError(`Ошибка входа: ${error}`)
         return
       }
-      setServerError(null)
-      dispatch(setSession(res))
+      setError(null)
       reset()
+      dispatch(setSession(res))
+
       nav('/')
     })
   }
 
-  const errMessage =
-    errors?.login?.message || errors?.password?.message || serverError
-
-  if (roleId !== ROLE.GUEST)
-    return (
-      <div>
-        <p>
-          Вход выполнен.
-          <br />
-          Имя пользователя: <b>{login}</b>
-        </p>
-      </div>
-    )
+  const formError = errors?.login || errors?.password || errors?.passCheck
+  const errMessage = error || formError?.message
 
   return (
     <Form
       onSubmit={handleSubmit(onSubmit)}
       className={styles['form-center']}
     >
-      <input
+      <Input
         type='text'
         placeholder='Имя пользователя'
-        {...register('login')}
+        {...register('login', { onChange: () => setError(null) })}
       />
-      <input
+      <Input
         type='password'
         placeholder='Пароль'
-        {...register('password')}
+        {...register('password', { onChange: () => setError(null) })}
       />
 
-      <Button type='submit'>Войти</Button>
+      <Button
+        type='submit'
+        disabled={!!formError}
+      >
+        Войти
+      </Button>
 
       {!!errMessage && <p style={{ color: 'red' }}>{errMessage}</p>}
+
+      <Link to={'/register'}>Регистрация</Link>
     </Form>
   )
 }
