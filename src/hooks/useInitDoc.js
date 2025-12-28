@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { resetDocData, setDocData } from '../actions'
-import { selectUser } from '../selectors'
+import { selectUserId, selectUserRole } from '../selectors'
 
 import { proxy } from '../proxy'
 import { checkAccess } from '../utils/check-access'
@@ -10,13 +10,14 @@ import { ROLE } from '../constants'
 export const useInitDoc = docId => {
   const dispatch = useDispatch()
 
-  const user = useSelector(selectUser)
+  const userId = useSelector(selectUserId)
+  const roleId = useSelector(selectUserRole)
 
   const [lib, setLib] = useState({})
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState([])
 
-  const prepDocPageData = async cancelled => {
+  const prepDocPageData = async isCancelled => {
     setIsLoading(true)
     const [{ err: errLib, res: resLib }, { err: errDoc, res: resDoc }] =
       await Promise.all([
@@ -25,10 +26,10 @@ export const useInitDoc = docId => {
         // Получение данных документа
         docId
           ? proxy.fetchDocument(docId)
-          : { res: { title: 'Новый коллаж', owner_id: user.id } },
+          : { res: { title: 'Новый коллаж', owner_id: userId } },
       ])
 
-    if (cancelled) return
+    if (isCancelled) return
 
     let err = []
     if (errLib) err.push(errLib)
@@ -39,9 +40,8 @@ export const useInitDoc = docId => {
     setLib(resLib || {})
 
     // Уровень доступа к документу
-    const removable =
-      checkAccess([ROLE.ADMIN], user.roleId) || resDoc.owner_id === user.id
-    const editable = removable || resDoc.editor_id === user.id
+    const removable = checkAccess([ROLE.ADMIN], roleId) || resDoc.owner_id === userId
+    const editable = removable || resDoc.editor_id === userId
     // Диспатч документа в стор
     dispatch(
       setDocData({
@@ -51,16 +51,16 @@ export const useInitDoc = docId => {
       }),
     )
 
-    if (!cancelled) setIsLoading(false)
+    if (!isCancelled) setIsLoading(false)
   }
 
   useEffect(() => {
-    let cancelled = false
+    let isCancelled = false
 
-    prepDocPageData(cancelled)
+    prepDocPageData(isCancelled)
 
     return () => {
-      cancelled = true
+      isCancelled = true
       dispatch(resetDocData())
     }
   }, [])

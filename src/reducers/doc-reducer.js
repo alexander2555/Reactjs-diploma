@@ -1,4 +1,4 @@
-import { ACTION_TYPE } from '../constants'
+import { ACTION_TYPE } from '../actions'
 
 const initialDocState = {
   id: null,
@@ -10,6 +10,11 @@ const initialDocState = {
   public: false,
   elements: [],
   changed: false,
+  size: {
+    width: 800,
+    height: 1000,
+  },
+  bg_color: 'white',
 }
 
 export const docReducer = (state = initialDocState, { type, payload }) => {

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useMatches } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { selectDocChanged, selectDocTitle } from '../../../../selectors'
+import { selectDocChanged, selectDocTitle, selectDocument } from '../../../../selectors'
 import { setDocChanged, setDocData } from '../../../../actions'
 
 import { Input } from '../../../../components'
@@ -17,6 +17,7 @@ export const Header = ({ pageTitle }) => {
   // Страница документа ?
   const isDocPage = useMatches().at(-1).pathname.includes('document')
 
+  const doc = useSelector(selectDocument)
   const docTitle = useSelector(selectDocTitle)
   const docChanged = useSelector(selectDocChanged)
 
@@ -48,9 +49,13 @@ export const Header = ({ pageTitle }) => {
         />
       ) : (
         <h1
-          className={cn([styles.h1, docChanged && styles.changed])}
+          className={cn([
+            styles.h1,
+            docChanged && styles.changed,
+            isDocPage && doc.editable && styles.editable,
+          ])}
           onClick={() => {
-            if (isDocPage) setIsTitleEditing(true)
+            if (isDocPage) setIsTitleEditing(doc.editable)
           }}
         >
           {isDocPage ? docTitle : pageTitle}

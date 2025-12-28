@@ -1,7 +1,8 @@
 import { nowDateTime } from '../../utils'
+import { API_URL } from '../constants'
 
 export const addDoc = docData =>
-  fetch('http://localhost:3000/documents', {
+  fetch(`${API_URL}documents`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -18,6 +19,6 @@ export const addDoc = docData =>
       throw new Error(resp.statusText)
     })
     .catch(err => {
-      console.error('Error adding document:', err)
+      console.error('[API] Adding document', err)
       return null
     })

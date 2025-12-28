@@ -8,13 +8,15 @@ import {
   selectUserRole,
   selectUserSession,
 } from '../../../../../../selectors'
-import { closeSession, saveDocAsync } from '../../../../../../actions'
+import { closeSession, saveDocAsync, setPending } from '../../../../../../actions'
 
 import { ROLE } from '../../../../../../constants'
 
 import { IDocument } from '../../../../../../types'
 
 import styles from './Controls.module.sass'
+import { useEffect, useRef } from 'react'
+import { fetchRoles } from '../../../../../../proxy/operations'
 
 export const Controls = ({ className, isDocPage }) => {
   const isLoginPage = useMatches().at(-1).pathname.includes('login')
@@ -27,6 +29,18 @@ export const Controls = ({ className, isDocPage }) => {
 
   const docData = useSelector(selectDocument)
 
+  const userNameRef = useRef(null)
+
+  useEffect(() => {
+    fetchRoles(roleId)
+      .then(({ res, err }) => {
+        if (err) throw new Error(err)
+
+        userNameRef.current?.setAttribute('data-role', res?.name)
+      })
+      .catch(console.warn)
+  }, [roleId])
+
   const onSave = () => {
     // nav - для навигации на новый документ
     const dataForUpdate = Object.fromEntries(
@@ -37,7 +51,7 @@ export const Controls = ({ className, isDocPage }) => {
 
   const onSignOut = () => {
     dispatch(closeSession(session))
-
+    dispatch(setPending(false))
     nav('/')
   }
 
@@ -60,7 +74,10 @@ export const Controls = ({ className, isDocPage }) => {
           </Button>
         ) : (
           <div>
-            <strong>{login}</strong>&nbsp;
+            <div className={styles['user-name']} ref={userNameRef}>
+              {login}
+            </div>
+            &nbsp;
             <Button
               className={styles['btn-sign-in-out']}
               title='Выйти'

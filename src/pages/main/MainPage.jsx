@@ -36,11 +36,11 @@ export const MainPage = () => {
       setError(err)
 
       setDocuments(res || [])
+
+      setIsLoading(false)
     }
 
     initGallery()
-
-    setIsLoading(false)
   }, [roleId])
 
   const onDocCardSelect = id => {
@@ -53,9 +53,7 @@ export const MainPage = () => {
 
   const onDocRemove = async () => {
     setIsLoading(true)
-    const { err, res: newDocsList } = await dispatch(
-      removeDocAsync(selectedDocId),
-    )
+    const { err, res: newDocsList } = await dispatch(removeDocAsync(selectedDocId))
 
     setError(err)
 
@@ -63,6 +61,9 @@ export const MainPage = () => {
       setDocuments(newDocsList)
       setSelectedDocId(null)
     }
+
+    setIsSelectedDocEditable(false)
+    setIsSelectedDocRemovable(false)
 
     setIsLoading(false)
   }
@@ -75,22 +76,14 @@ export const MainPage = () => {
     <MainLayout
       leftPanel={
         <>
-          {isCreator && (
-            <Button onClick={() => nav('/document')}>Создать</Button>
-          )}
-          {selectedDocId && isSelectedDocEditable && (
-            <Button
-              to={`document/${selectedDocId}`}
-              className={styles['btn-edit']}
-            >
-              Редактировать
+          {isCreator && <Button onClick={() => nav('/document')}>Создать</Button>}
+          {selectedDocId && (
+            <Button to={`document/${selectedDocId}`} className={styles['btn-edit']}>
+              {isSelectedDocEditable ? 'Редактировать' : 'Просмотреть'}
             </Button>
           )}
           {selectedDocId && isSelectedDocRemovable && (
-            <Button
-              className={styles['btn-del']}
-              onClick={onDocRemove}
-            >
+            <Button className={styles['btn-del']} onClick={onDocRemove}>
               Удалить
             </Button>
           )}
@@ -109,10 +102,7 @@ export const MainPage = () => {
               />
             ))
           ) : isLoading ? (
-            <Loader
-              message={'Загрузка...'}
-              local={true}
-            />
+            <Loader message='Загрузка галереи...' local={true} />
           ) : (
             <p>Галерея пуста</p>
           )}

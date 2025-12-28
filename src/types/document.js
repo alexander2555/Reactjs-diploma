@@ -8,4 +8,9 @@ export const IDocument = {
   editor_id: null,
   public: false,
   elements: [],
+  size: {
+    width: 0,
+    height: 0,
+  },
+  bg_color: 'white',
 }

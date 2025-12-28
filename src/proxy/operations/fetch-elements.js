@@ -11,7 +11,7 @@ export const fetchElements = async id => {
 
   if (!(graphics && graphics.length)) {
     return {
-      err: 'Graphics elements not found',
+      err: '[PROXY] Graphics elements not found',
       res: null,
     }
   }

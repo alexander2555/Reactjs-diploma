@@ -1,23 +1,24 @@
 /**
  * Запрос списка ролей пользователя
  *
- * @returns {error: string|null, res: object|null} - объект с массивом ролей или null
+ * @param {id?: number}
+ * @returns {error: string|null, res: object|string|null} - объект с массивом ролей, ролью или null
  */
 
 import { getRoles } from '../api'
 
-export const fetchRoles = async () => {
-  const roles = await getRoles()
+export const fetchRoles = async id => {
+  const roles = await getRoles(id)
 
   if (!(roles && roles.length)) {
     return {
-      error: 'Roles not found',
+      err: '[PROXY] Roles not found',
       res: null,
     }
   }
 
   return {
-    error: null,
-    res: { data: roles },
+    err: null,
+    res: id || id === 0 ? roles[0] : roles,
   }
 }

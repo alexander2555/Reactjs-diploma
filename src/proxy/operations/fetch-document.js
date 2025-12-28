@@ -1,7 +1,8 @@
 /**
  * Запрос списка графических элементов документа
  *
- * @returns {error: string|null, res: object|null} - объект с массивом элементов или null
+ * @param {docId: string}
+ * @returns {error: string|null, res: object|null} - объект документа с массивом элементов или null
  */
 
 import { getDoc } from '../api'
@@ -11,7 +12,7 @@ export const fetchDocument = async docId => {
 
   if (!(doc && doc.length)) {
     return {
-      err: 'Document not found',
+      err: '[PROXY] Document not found',
       res: null,
     }
   }

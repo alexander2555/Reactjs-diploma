@@ -1,4 +1,3 @@
-export * from './docs-reducer'
+export * from './auth-reducer'
 export * from './doc-reducer'
-export * from './user-reducer'
 export * from './graphics-reducer'

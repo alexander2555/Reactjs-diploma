@@ -1,13 +1,12 @@
-import { useLayoutEffect, useState } from 'react'
+import { useLayoutEffect } from 'react'
 import { Outlet, useMatches } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { Loader } from '../../components'
 import { Header, Footer } from './components'
 
-import { setSession } from '../../actions'
-
-import { proxy } from '../../proxy'
+import { checkMeAsync } from '../../actions'
+import { selectAuthData } from '../../selectors'
 
 import styles from './AppLayout.module.sass'
 
@@ -15,23 +14,14 @@ export const AppLayout = () => {
   const dispatch = useDispatch()
   const pageMatch = useMatches().at(-1)
 
-  const [isLoading, setIsLoading] = useState(true)
+  const { isPending } = useSelector(selectAuthData)
 
   useLayoutEffect(() => {
-    proxy.me().then(({ err, res }) => {
-      if (err) {
-        console.warn(err)
-      }
-      if (res) {
-        dispatch(setSession(res))
-      }
-
-      setIsLoading(false)
-    })
+    dispatch(checkMeAsync())
   }, [])
 
-  if (isLoading) {
-    return <Loader message='Згрузка данных пользователя' />
+  if (isPending) {
+    return <Loader message='Згрузка данных пользователя ...' />
   }
 
   return (

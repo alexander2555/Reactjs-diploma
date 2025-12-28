@@ -1,5 +1,7 @@
+import { API_URL } from '../constants'
+
 export const removeDoc = id =>
-  fetch(`http://localhost:3000/documents/${id}`, {
+  fetch(`${API_URL}documents/${id}`, {
     method: 'DELETE',
   })
     .then(resp => {
@@ -7,6 +9,6 @@ export const removeDoc = id =>
       return true
     })
     .catch(err => {
-      console.error('[API] Error deleting document:', err)
+      console.error('[API] Deleting document', err)
       return false
     })

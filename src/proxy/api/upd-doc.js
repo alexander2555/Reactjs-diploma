@@ -1,7 +1,8 @@
 import { nowDateTime } from '../../utils'
+import { API_URL } from '../constants'
 
 export const updDoc = (id, docData) =>
-  fetch(`http://localhost:3000/documents/${id}`, {
+  fetch(`${API_URL}documents/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -15,6 +16,6 @@ export const updDoc = (id, docData) =>
       throw new Error(resp.statusText)
     })
     .catch(err => {
-      console.error('Error patching document:', err)
+      console.error('[API] Patching document', err)
       return null
     })

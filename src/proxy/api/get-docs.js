@@ -1,5 +1,7 @@
+import { API_URL } from '../constants'
+
 export const getDocs = () =>
-  fetch('http://localhost:3000/documents')
+  fetch(`${API_URL}documents`)
     .then(resp => {
       if (resp.ok) {
         return resp.json()
@@ -7,6 +9,6 @@ export const getDocs = () =>
       throw new Error(resp.statusText)
     })
     .catch(err => {
-      console.error('[Fetching docs]', err)
+      console.error('[API] Fetching docs', err)
       return []
     })

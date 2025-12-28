@@ -1,5 +1,7 @@
-export const addUser = (login, password) =>
-  fetch('http://localhost:3000/users', {
+import { API_URL } from '../constants'
+
+export const addUser = (login, password, role = 2) =>
+  fetch(`${API_URL}users`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json; charset=UTF-8',
@@ -8,7 +10,7 @@ export const addUser = (login, password) =>
       login,
       password,
       registeredAt: new Date().toISOString().substring(0, 16).replace('T', ' '),
-      role_id: 2,
+      role_id: role,
     }),
   })
     .then(resp => {
@@ -18,6 +20,6 @@ export const addUser = (login, password) =>
       throw new Error(resp.statusText)
     })
     .catch(err => {
-      console.error('Error adding user:', err)
+      console.error('[API] Adding user', err)
       return null
     })

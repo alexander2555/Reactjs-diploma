@@ -10,7 +10,7 @@ export const getDoc = docId =>
         throw new Error(respDoc.statusText)
       })
       .catch(err => {
-        console.error('[Fetching dcoument]', err)
+        console.error('[API] Fetching dcoument', err)
         return []
       }),
     fetch(`${API_URL}doc_el?doc_id=${docId}`)
@@ -21,7 +21,7 @@ export const getDoc = docId =>
         throw new Error(respEl.statusText)
       })
       .catch(err => {
-        console.error('[Fetching dcoument elements]', err)
+        console.error('[API] Fetching dcoument elements', err)
         return []
       }),
   ])

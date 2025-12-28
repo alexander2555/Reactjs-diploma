@@ -21,7 +21,7 @@ export const me = async () => {
   if (!user) {
     sessionStorage.removeItem('sessionData')
     return {
-      err: 'Current session user not found!',
+      err: '[PROXY] Current session user not found!',
       res: null,
     }
   }
@@ -32,9 +32,7 @@ export const me = async () => {
       id: user.id,
       login: user.login,
       roleId: user.role_id,
-      session: Object.keys(
-        JSON.parse(sessionStorage.getItem('sessionData')),
-      )[0],
+      session: Object.keys(JSON.parse(sessionStorage.getItem('sessionData')))[0],
     },
   }
 }

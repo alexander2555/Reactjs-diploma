@@ -1,7 +1,9 @@
+import { API_URL } from '../constants'
+
 export const updDocEl = (docElements = []) =>
   Promise.all(
     docElements.map(el =>
-      fetch(`http://localhost:3000/doc_el/${el.id}`, {
+      fetch(`${API_URL}doc_el/${el.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(el),
@@ -10,12 +12,13 @@ export const updDocEl = (docElements = []) =>
   )
     .then(resp => {
       if (!resp?.length) return []
-      if (resp.ok) {
-        return resp.json()
+      const failed = resp.filter(r => !r.ok)
+      if (failed.length) {
+        throw new Error(failed.map(f => f.statusText).join('; '))
       }
-      throw new Error(resp.statusText)
+      return Promise.all(resp.map(r => r.json()))
     })
     .catch(err => {
-      console.error('[API] Error patching document elements:', err)
+      console.error('[API] Patching document elements errors:', err)
       return null
     })
