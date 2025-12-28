@@ -13,7 +13,7 @@ export const login = async (authLogin, authPassword) => {
 
   if (!user) {
     return {
-      error: 'User not found',
+      err: 'User not found',
       res: null,
     }
   }
@@ -22,7 +22,7 @@ export const login = async (authLogin, authPassword) => {
 
   if (password !== authPassword) {
     return {
-      error: 'Invalid password',
+      err: 'Invalid password',
       res: null,
     }
   }
@@ -30,7 +30,7 @@ export const login = async (authLogin, authPassword) => {
   const hash = sessions.create({ login })
 
   return {
-    error: null,
+    err: null,
     res: {
       id,
       login,

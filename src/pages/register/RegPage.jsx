@@ -1,16 +1,15 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Button, Input, Form } from '../../components'
-import { setSession } from '../../actions'
-import { selectUserRole } from '../../selectors'
+import { Button, Input, Form, Select } from '../../components'
+import { setAuthError } from '../../actions'
+import { selectAuthData } from '../../selectors'
 import { ROLE } from '../../constants'
-import { proxy } from '../../proxy'
 
 import styles from './RegPage.module.sass'
+import { registerAsync } from '../../actions/auth/register-async'
 
 const regFromSchema = yup.object().shape({
   login: yup
@@ -33,9 +32,6 @@ const regFromSchema = yup.object().shape({
 
 export const RegPage = () => {
   const dispatch = useDispatch()
-  const nav = useNavigate()
-
-  const [error, setError] = useState(null)
 
   const {
     register,
@@ -51,54 +47,57 @@ export const RegPage = () => {
     resolver: yupResolver(regFromSchema),
   })
 
-  const roleId = useSelector(selectUserRole)
-
-  const onSubmit = ({ login, password }) => {
-    proxy.register(login, password).then(({ error, res }) => {
-      if (error) {
-        setError(error)
-        return
-      }
-      setError(null)
-      reset()
-      dispatch(setSession(res))
-      nav('/')
-    })
-  }
-
-  const formError = errors?.login || errors?.password || errors?.passCheck
-  const errMessage = error || formError?.message
+  const { error, roleId, isPending } = useSelector(selectAuthData)
 
   if (roleId !== ROLE.GUEST) {
     return <Navigate to='/' />
   }
 
+  const onSubmit = regData => {
+    console.log(regData)
+    dispatch(registerAsync(regData))
+    reset()
+  }
+
+  const handleInputChange = () => {
+    if (error) () => dispatch(setAuthError(null))
+  }
+
+  const formError = errors?.login || errors?.password || errors?.passCheck
+  const errMessage = error || formError?.message
+
   return (
-    <Form
-      onSubmit={handleSubmit(onSubmit)}
-      className={styles['form-center']}
-    >
+    <Form onSubmit={handleSubmit(onSubmit)} className={styles['form-center']}>
       <Input
         type='text'
         placeholder='логин'
-        {...register('login', { onChange: () => setError(null) })}
+        {...register('login', { onChange: handleInputChange })}
+        disabled={isPending}
       />
       <Input
         type='password'
         placeholder='пароль'
-        {...register('password', { onChange: () => setError(null) })}
+        {...register('password', { onChange: handleInputChange })}
+        disabled={isPending}
       />
       <Input
         type='password'
         placeholder='повтор пароля'
-        {...register('passCheck', { onChange: () => setError(null) })}
+        {...register('passCheck', { onChange: handleInputChange })}
+        disabled={isPending}
+      />
+      <Select
+        label='Роль'
+        options={[
+          [1, 'Мастер'],
+          [2, 'Пользователь'],
+        ]}
+        {...register('role')}
+        disabled={isPending}
       />
 
-      <Button
-        type='submit'
-        disabled={!!formError}
-      >
-        Зарегистрировать
+      <Button type='submit' disabled={!!formError && isPending}>
+        {isPending ? 'Проверка ...' : 'Зарегистрировать'}
       </Button>
 
       {!!errMessage && <p style={{ color: 'red' }}>{errMessage}</p>}

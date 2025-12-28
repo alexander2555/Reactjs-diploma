@@ -19,7 +19,7 @@ export const fetchDocs = async () => {
 
   if (!(docs && docs.length)) {
     return {
-      error: 'Docs not found',
+      error: '[PROXY] Docs not found',
       res: null,
     }
   }

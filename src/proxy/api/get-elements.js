@@ -9,6 +9,6 @@ export const getElements = id =>
       throw new Error(resp.statusText)
     })
     .catch(err => {
-      console.error('[Fetching elements]', err)
+      console.error('[API] Fetching elements', err)
       return []
     })

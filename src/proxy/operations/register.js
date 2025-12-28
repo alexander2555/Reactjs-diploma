@@ -8,22 +8,22 @@
 import { addUser, getUser } from '../api'
 import { sessions } from '../sessions'
 
-export const register = async (regLogin, regPassword) => {
+export const register = async (regLogin, regPassword, regRole) => {
   const user = await getUser(regLogin)
 
   if (user) {
     return {
-      error: 'User already exists',
+      err: 'User already exists',
       res: null,
     }
   }
 
-  const { id, login, role_id } = await addUser(regLogin, regPassword)
+  const { id, login, role_id } = await addUser(regLogin, regPassword, regRole)
 
   const hash = sessions.create({ login })
 
   return {
-    error: null,
+    err: null,
     res: {
       id,
       login,

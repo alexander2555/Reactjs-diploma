@@ -10,5 +10,8 @@ export * from './upd-doc'
 export * from './remove-doc'
 
 export * from './get-elements'
-export * from './get-element'
+export * from './get-doc-el'
 export * from './upd-doc-el'
+
+export * from './add-element'
+export * from './remove-element'

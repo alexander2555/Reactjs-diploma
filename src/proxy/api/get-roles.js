@@ -1,5 +1,7 @@
-export const getRoles = () =>
-  fetch('http://localhost:3000/roles')
+import { API_URL } from '../constants'
+
+export const getRoles = id =>
+  fetch(`${API_URL}roles${id || id === 0 ? '?id=' + id : ''}`)
     .then(resp => {
       if (resp.ok) {
         return resp.json()
@@ -7,6 +9,6 @@ export const getRoles = () =>
       throw new Error(resp.statusText)
     })
     .catch(err => {
-      console.error('[Fetching roles]', err)
+      console.error('[API] Fetching roles', err)
       return []
     })

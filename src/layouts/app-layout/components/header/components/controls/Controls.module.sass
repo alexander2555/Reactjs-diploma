@@ -1,7 +1,21 @@
+.user-name
+  position: relative
+  display: inline-block
+  font-weight: bold
+  margin-right: 1rem
+  &::after
+    position: absolute
+    display: block
+    content: attr(data-role)
+    right: 0
+    bottom: -.7rem
+    font-size: .5rem
+    opacity: 0.7
+    text-transform: uppercase
+
 .btn
   &-login
     font-size: 18px
-    transition: background-color 0.3s, box-shadow 0.3s
 
   &-save
     border-width: 2px

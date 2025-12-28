@@ -1,6 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom'
+
 import { AppLayout } from './layouts'
 import { AuthPage, MainPage, DocumentPage, RegPage, LibPage } from './pages'
+import { ProtectedRoute } from './components'
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +26,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'document',
-        Component: DocumentPage,
+        Component: () => (
+          <ProtectedRoute>
+            <DocumentPage />
+          </ProtectedRoute>
+        ),
         handle: { pageTitle: 'Новый коллаж' },
         children: [
           {
@@ -36,7 +42,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'library',
-        Component: LibPage,
+        Component: () => (
+          <ProtectedRoute>
+            <LibPage />
+          </ProtectedRoute>
+        ),
         handle: { pageTitle: 'Библиотека' },
       },
       {

@@ -1,13 +1,12 @@
 /**
  * Создание нового документа
  *
- * @param {string}
- * @param {string}
+ * @param {data: object} - объект данных документа
  * @returns {error: string|null, res: object|null} - объект документа или null
  */
-import { ROLE } from '../../constants'
 import { addDoc } from '../api'
 import { sessions } from '../sessions'
+import { ROLE } from '../../constants'
 
 export const createDocument = async data => {
   const access = await sessions.checkAccess([ROLE.MASTER, ROLE.ADMIN])
@@ -23,7 +22,7 @@ export const createDocument = async data => {
 
   if (!docData) {
     return {
-      err: 'Document did not create',
+      err: '[PROXY] Document did not create',
       res: null,
     }
   }
