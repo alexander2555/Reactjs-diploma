@@ -19,7 +19,7 @@ export const saveDocAsync =
     const err = results.filter(({ err }) => !!err).map(r => r.err)
 
     if (err && err.length) {
-      console.warn('[ACTIONS] Document save errors:', ...err)
+      console.warn('[ACTIONS] Document saving errors:', ...err)
       return
     }
 

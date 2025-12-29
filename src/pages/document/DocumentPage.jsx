@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux'
 import { selectDocument } from '../../selectors'
 
-import { DocEnvProvider, ScaleProvider } from '../../providers'
+import { DocEnvProvider, LibProvider, ScaleProvider } from '../../providers'
 
 import { MainLayout } from '../../layouts'
 import { CanvasContainer, LeftPanel, RightPanel } from './components'
@@ -13,13 +13,15 @@ export const DocumentPage = () => {
 
   return (
     <DocEnvProvider>
-      <ScaleProvider>
-        <MainLayout
-          leftPanel={doc.editable && <LeftPanel />}
-          mainContent={<CanvasContainer className={styles['canvas-container']} />}
-          rightPanel={doc.editable && <RightPanel />}
-        />
-      </ScaleProvider>
+      <LibProvider>
+        <ScaleProvider>
+          <MainLayout
+            leftPanel={doc.editable && <LeftPanel />}
+            mainContent={<CanvasContainer className={styles['canvas-container']} />}
+            rightPanel={doc.editable && <RightPanel />}
+          />
+        </ScaleProvider>
+      </LibProvider>
     </DocEnvProvider>
   )
 }
