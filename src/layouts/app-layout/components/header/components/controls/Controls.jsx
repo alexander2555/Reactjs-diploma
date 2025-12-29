@@ -1,5 +1,6 @@
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useMatches, useNavigate } from 'react-router-dom'
+import { useLocation, useMatches, useNavigate } from 'react-router-dom'
 
 import { Icon, Button } from '../../../../../../components'
 import {
@@ -12,17 +13,19 @@ import { closeSession, saveDocAsync, setPending } from '../../../../../../action
 
 import { ROLE } from '../../../../../../constants'
 
+import { proxy } from '../../../../../../proxy'
+
 import { IDocument } from '../../../../../../types'
 
 import styles from './Controls.module.sass'
-import { useEffect, useRef } from 'react'
-import { fetchRoles } from '../../../../../../proxy/operations'
 
 export const Controls = ({ className, isDocPage }) => {
   const isLoginPage = useMatches().at(-1).pathname.includes('login')
 
   const nav = useNavigate()
   const dispatch = useDispatch()
+  const location = useLocation()
+
   const session = useSelector(selectUserSession)
   const roleId = useSelector(selectUserRole)
   const login = useSelector(selectUserLogin)
@@ -32,7 +35,8 @@ export const Controls = ({ className, isDocPage }) => {
   const userNameRef = useRef(null)
 
   useEffect(() => {
-    fetchRoles(roleId)
+    proxy
+      .fetchRoles(roleId)
       .then(({ res, err }) => {
         if (err) throw new Error(err)
 
@@ -52,7 +56,7 @@ export const Controls = ({ className, isDocPage }) => {
   const onSignOut = () => {
     dispatch(closeSession(session))
     dispatch(setPending(false))
-    nav('/')
+    nav('/', { replace: true })
   }
 
   return (
@@ -68,7 +72,12 @@ export const Controls = ({ className, isDocPage }) => {
       )}
       {!isLoginPage &&
         (roleId === ROLE.GUEST ? (
-          <Button className={styles['btn-login']} title='Войти' to='/login'>
+          <Button
+            className={styles['btn-login']}
+            title='Войти'
+            to='/login'
+            state={{ from: location.pathname }}
+          >
             <Icon iconType='solid' iconName='user' />
             &nbsp;Вход
           </Button>

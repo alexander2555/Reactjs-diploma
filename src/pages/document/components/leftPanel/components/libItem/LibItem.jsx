@@ -1,5 +1,3 @@
-import { Loader } from '../../../../../../components'
-
 export const LibItem = ({
   className,
   ref,
@@ -15,6 +13,7 @@ export const LibItem = ({
         draggable={true}
         onDragStart={onDragStart}
         crossOrigin='anonymous'
+        title={title}
       />
       <span>{description}</span>
     </li>

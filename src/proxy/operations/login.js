@@ -1,8 +1,8 @@
 /**
  * Автроризация пользователя
  *
- * @param {string} authLogin
- * @param {string} authPassword
+ * @param {authLogin: string}
+ * @param {authPassword: string}
  * @returns {error: string|null, res: object|null} - объект пользователя или null
  */
 import { getUser } from '../api'

@@ -1,15 +1,20 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { selectDocument } from '../../../../selectors'
+import { graphicsLoadAsync, setDocData } from '../../../../actions'
+import { selectDocument, selectGraphicsLib } from '../../../../selectors'
 
 import { Stage, Layer, Rect } from 'react-konva'
-
-import { useDocEnvironment, useScale, useSelectEl } from '../../../../providers'
+import { useResizeObserver } from '../../../../hooks/useResizeObserver'
 
 import { Graphics, Loader } from '../../../../components'
-import { setDocData } from '../../../../actions'
-import { useResizeObserver } from '../../../../hooks/useResizeObserver'
+import {
+  useDocEnvironment,
+  useLibrary,
+  useScale,
+  useSelectEl,
+} from '../../../../providers'
+
 import { getHash } from '../../../../utils'
 
 const dpr = window.devicePixelRatio || 1
@@ -17,10 +22,28 @@ const dpr = window.devicePixelRatio || 1
 export const CanvasContainer = ({ className }) => {
   const dispatch = useDispatch()
   const doc = useSelector(selectDocument)
+  const graphicsLib = useSelector(selectGraphicsLib)
 
-  const { libRef, stageRef, draggingImgRef, isLoading } = useDocEnvironment()
+  const { stageRef, draggingImgRef, isLoading } = useDocEnvironment()
+  const { libLoading, setLibLoading, libError, setLibError, libRef } = useLibrary()
 
   const canvasRef = useRef(null)
+
+  useEffect(() => {
+    let isCancelled = false
+
+    setLibLoading('Загрузка графики ...')
+    dispatch(graphicsLoadAsync(isCancelled)).then(({ err }) => {
+      setLibError(err)
+      setLibLoading('')
+    })
+
+    return () => {
+      isCancelled = true
+    }
+  }, [])
+
+  if (libError) console.warn(libError)
 
   /**
    * Перемещение холста
@@ -112,7 +135,7 @@ export const CanvasContainer = ({ className }) => {
     doc.size,
   )
 
-  return isLoading ? (
+  return isLoading && libLoading ? (
     <Loader local={true} message={'Загрузка'} />
   ) : (
     <div
@@ -121,50 +144,55 @@ export const CanvasContainer = ({ className }) => {
       onDrop={handleDrop}
       onDragOver={e => e.preventDefault()}
     >
-      <Stage
-        className='stage'
-        ref={stageRef}
-        x={stagePos.x}
-        y={stagePos.y}
-        width={stageSize.width * dpr}
-        height={stageSize.height * dpr}
-        scaleX={scale * dpr}
-        scaleY={scale * dpr}
-        draggable
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onWheel={handleWheel}
-        onMouseDown={checkUnselect}
-        onTouchStart={checkUnselect}
-      >
-        {!!(stageSize.width * stageSize.height) && (
+      {!!(stageSize.width * stageSize.height) && (
+        <Stage
+          className='stage'
+          ref={stageRef}
+          x={stagePos.x}
+          y={stagePos.y}
+          width={stageSize.width * dpr}
+          height={stageSize.height * dpr}
+          scaleX={scale * dpr}
+          scaleY={scale * dpr}
+          draggable
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onWheel={handleWheel}
+          onMouseDown={checkUnselect}
+          onTouchStart={checkUnselect}
+        >
           <Layer>
-            {/** Визуализация холста */}
-            <Rect
-              width={doc.size.width}
-              height={doc.size.height}
-              stroke='white'
-              strokeWidth={1}
-              shadowBlur={25}
-              shadowColor={doc.bg_color}
-              fill={doc.bg_color}
-              cornerRadius={10}
-              onMouseDown={() => setSelectedEl(null)}
-              onTouchStart={() => setSelectedEl(null)}
-            />
-            {/***/}
+            {
+              /** Визуализация холста */
+              !!(doc.size.width * doc.size.height) && (
+                <Rect
+                  width={doc.size.width}
+                  height={doc.size.height}
+                  stroke='white'
+                  strokeWidth={1}
+                  shadowBlur={25}
+                  shadowColor={doc.bg_color}
+                  fill={doc.bg_color}
+                  cornerRadius={10}
+                  onMouseDown={() => setSelectedEl(null)}
+                  onTouchStart={() => setSelectedEl(null)}
+                />
+              )
+              /***/
+            }
             {doc.elements.map(el => (
               <Graphics
                 key={el.id}
                 element={el}
+                imgUrl={graphicsLib?.find(g => g.id === el.el_id)?.image_url}
                 libRef={libRef}
                 isSelected={selectedEl === el.id}
                 onSelect={() => setSelectedEl(el.id)}
               />
             ))}
           </Layer>
-        )}
-      </Stage>
+        </Stage>
+      )}
     </div>
   )
 }

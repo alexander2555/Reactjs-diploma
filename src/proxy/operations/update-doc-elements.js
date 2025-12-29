@@ -14,7 +14,7 @@ export const updateDocElements = async (docId, docElementsData) => {
 
   if (!access) {
     return {
-      err: '[PROXY] Access denied for update operation!',
+      err: '[PROXY] Access denied for update elements!',
       res: null,
     }
   }

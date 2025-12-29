@@ -1,18 +1,21 @@
-import { Button, Loader } from '../../../../components'
-import { LibItem } from './components/libItem/LibItem'
-
 import { useSelector } from 'react-redux'
+
 import { selectDocument } from '../../../../selectors'
 
-import { useDocEnvironment } from '../../../../providers'
+import { Button, Loader } from '../../../../components'
+import { LibItem } from './components'
+
+import { useDocEnvironment, useLibrary } from '../../../../providers'
+
+import { stagePDFExport } from '../../../../utils'
 
 import styles from '../../DocumentPage.module.sass'
-import { stagePDFExport } from '../../../../utils'
 
 export const LeftPanel = () => {
   const doc = useSelector(selectDocument)
 
-  const { lib, stageRef, libRef, draggingImgRef, isLoading } = useDocEnvironment()
+  const { stageRef, draggingImgRef, isLoading } = useDocEnvironment()
+  const { libLoading, libRef, filteredLib } = useLibrary()
 
   const handleExport = () => {
     const stage = stageRef.current
@@ -23,9 +26,9 @@ export const LeftPanel = () => {
   return (
     <>
       <Button to={'/library'}>Библиотека</Button>
-      {!isLoading && lib && lib.length ? (
+      {!libLoading && filteredLib?.length ? (
         <ul className={styles['elements-list']}>
-          {lib.map(({ id, ...elData }) => (
+          {filteredLib.map(({ id, ...elData }) => (
             <LibItem
               key={id}
               className={styles['elements-item']}
@@ -33,12 +36,11 @@ export const LeftPanel = () => {
               ref={image => {
                 libRef.current[id] = image
               }}
-              libRef={libRef}
               onDragStart={() => (draggingImgRef.current = id)}
             />
           ))}
         </ul>
-      ) : isLoading ? (
+      ) : libLoading ? (
         <Loader content='Загрузка' />
       ) : (
         <div>Нет элементов</div>

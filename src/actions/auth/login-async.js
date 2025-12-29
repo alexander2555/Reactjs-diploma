@@ -16,7 +16,7 @@ export const loginAsync =
       dispatch(setAuthError(null))
       dispatch(setSession(res))
     } catch (err) {
-      console.warn('[Login action] error:', err.message)
+      console.warn('[ACTIONS] Login', err.message)
       dispatch(setAuthError(err.message))
     } finally {
       dispatch(setPending(false))

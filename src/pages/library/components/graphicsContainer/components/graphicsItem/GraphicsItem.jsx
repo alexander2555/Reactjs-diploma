@@ -1,6 +1,5 @@
 import cn from 'classnames'
-
-import styles from '../../LibPage.module.sass'
+import styles from '../../../../LibPage.module.sass'
 
 export const GraphicsItem = ({ className, imgSrc, descr, onSelect, selected }) => (
   <div

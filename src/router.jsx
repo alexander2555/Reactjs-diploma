@@ -1,8 +1,9 @@
 import { createBrowserRouter } from 'react-router-dom'
 
 import { AppLayout } from './layouts'
-import { AuthPage, MainPage, DocumentPage, RegPage, LibPage } from './pages'
+import { AuthPage, MainPage, DocumentPage, RegPage, LibPage, NotFound } from './pages'
 import { ProtectedRoute } from './components'
+import { ROLE } from './constants'
 
 export const router = createBrowserRouter([
   {
@@ -26,13 +27,16 @@ export const router = createBrowserRouter([
       },
       {
         path: 'document',
-        Component: () => (
-          <ProtectedRoute>
-            <DocumentPage />
-          </ProtectedRoute>
-        ),
-        handle: { pageTitle: 'Новый коллаж' },
         children: [
+          {
+            index: true,
+            Component: () => (
+              <ProtectedRoute requireRoles={[ROLE.ADMIN, ROLE.MASTER]}>
+                <DocumentPage />
+              </ProtectedRoute>
+            ),
+            handle: { pageTitle: 'Новый коллаж' },
+          },
           {
             path: ':id',
             Component: DocumentPage,
@@ -51,7 +55,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '*',
-        Component: <div>404 Not Found</div>,
+        Component: NotFound,
         handle: { pageTitle: '404' },
       },
     ],

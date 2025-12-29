@@ -1,11 +1,14 @@
+import { Link, Navigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Link, Navigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { Button, Form, Input, Loader } from '../../components'
+
+import { Button, Form, Input } from '../../components'
+
 import { loginAsync, setAuthError } from '../../actions'
 import { selectAuthData } from '../../selectors'
+
 import { ROLE } from '../../constants'
 
 import styles from './AuthPage.module.sass'
@@ -29,6 +32,7 @@ const schema = yup.object().shape({
 
 export const AuthPage = () => {
   const dispatch = useDispatch()
+  const location = useLocation()
 
   const { roleId, isPending, error } = useSelector(selectAuthData)
 
@@ -46,7 +50,7 @@ export const AuthPage = () => {
   })
 
   if (roleId !== ROLE.GUEST) {
-    return <Navigate to={'/'} />
+    return <Navigate to={location.state?.from || '/'} replace={true} />
   }
 
   const onSubmit = loginCredentials => {

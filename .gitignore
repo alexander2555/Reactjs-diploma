@@ -1,6 +1,6 @@
 .env
 
-db.json
+src/assets/db.json
 
 # Logs
 logs

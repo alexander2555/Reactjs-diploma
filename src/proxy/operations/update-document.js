@@ -14,7 +14,7 @@ export const updateDocument = async (id, data) => {
 
   if (!access) {
     return {
-      err: 'Access denied for update operation!',
+      err: 'Access denied for update document!',
       res: null,
     }
   }

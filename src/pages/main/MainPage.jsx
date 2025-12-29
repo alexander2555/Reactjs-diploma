@@ -1,14 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { selectUserRole } from '../../selectors'
+import { removeDocAsync } from '../../actions'
+
 import { Button, Loader } from '../../components'
 import { DocCard } from './components'
 import { MainLayout } from '../../layouts'
 
-import { useDispatch, useSelector } from 'react-redux'
-import { selectUserRole } from '../../selectors'
-import { removeDocAsync } from '../../actions'
 import { proxy } from '../../proxy'
-import { checkAccess } from '../../utils/check-access'
+
+import { checkAccess } from '../../utils'
 
 import { ROLE } from '../../constants'
 
@@ -19,6 +22,7 @@ export const MainPage = () => {
   const dispatch = useDispatch()
 
   const roleId = useSelector(selectUserRole)
+  const isCreator = useRef(false)
 
   const [documents, setDocuments] = useState([])
   const [isLoading, setIsLoading] = useState(true)
@@ -28,9 +32,12 @@ export const MainPage = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    isCreator.current = checkAccess([ROLE.ADMIN, ROLE.MASTER], roleId)
+
     setIsLoading(true)
 
     const initGallery = async () => {
+      setSelectedDocId(null)
       const { err, res } = await proxy.fetchDocs()
 
       setError(err)
@@ -70,13 +77,11 @@ export const MainPage = () => {
 
   if (error) console.warn(error)
 
-  const isCreator = checkAccess([ROLE.ADMIN, ROLE.MASTER], roleId)
-
   return (
     <MainLayout
       leftPanel={
         <>
-          {isCreator && <Button onClick={() => nav('/document')}>Создать</Button>}
+          {isCreator.current && <Button onClick={() => nav('/document')}>Создать</Button>}
           {selectedDocId && (
             <Button to={`document/${selectedDocId}`} className={styles['btn-edit']}>
               {isSelectedDocEditable ? 'Редактировать' : 'Просмотреть'}
@@ -104,7 +109,7 @@ export const MainPage = () => {
           ) : isLoading ? (
             <Loader message='Загрузка галереи...' local={true} />
           ) : (
-            <p>Галерея пуста</p>
+            <p>Галерея пуста{error && ` (Ошибка: ${error})`}</p>
           )}
         </ul>
       }

@@ -13,7 +13,7 @@ export const createDocument = async data => {
 
   if (!access) {
     return {
-      err: 'Access denied for create operation!',
+      err: 'Access denied for create document!',
       res: null,
     }
   }
