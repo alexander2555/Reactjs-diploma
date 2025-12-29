@@ -1,6 +1,7 @@
 .env
 
-src/assets/db.json
+db.json
+backend-example
 
 # Logs
 logs
@@ -14,6 +15,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+build
 *.local
 
 package-lock.json
