@@ -1,0 +1,10 @@
+const mongoose = require('mongoose')
+
+const ElementSchema = new mongoose.Schema({
+  id: { type: String, required: true, unique: true },
+  title: { type: String },
+  description: { type: String },
+  image_url: { type: String, required: true },
+}, { timestamps: true })
+
+module.exports = mongoose.model('Element', ElementSchema)
