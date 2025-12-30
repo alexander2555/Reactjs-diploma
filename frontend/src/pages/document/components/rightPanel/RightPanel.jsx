@@ -8,11 +8,12 @@ import { selectDocument, selectUserId, selectUserRole } from '../../../../select
 import { useScale, useSelectEl } from '../../../../providers'
 
 import { checkAccess } from '../../../../utils'
+
+import { proxy } from '../../../../proxy'
 import { ROLE, color } from '../../../../constants'
 
 import styles from '../../DocumentPage.module.sass'
 import cn from 'classnames'
-import { fetchUsers } from '../../../../proxy/operations'
 
 export const RightPanel = () => {
   const dispatch = useDispatch()
@@ -58,7 +59,7 @@ export const RightPanel = () => {
   }
 
   useEffect(() => {
-    fetchUsers().then(({ res, err }) => {
+    proxy.fetchUsers().then(({ res, err }) => {
       if (err) {
         console.warn(err)
         return

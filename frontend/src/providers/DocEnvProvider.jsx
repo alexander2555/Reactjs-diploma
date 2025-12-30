@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import { DocumentContext, SelectContext } from '../context'
 
-import { useInitDoc } from '../hooks/useInitDoc'
+import { useInitDoc } from '../hooks'
 
 export const useDocEnvironment = () => {
   return useContext(DocumentContext)
@@ -20,12 +20,10 @@ export const DocEnvProvider = ({ children }) => {
   const draggingImgRef = useRef(null)
 
   // Инициализация библиотеки и холста документа
-  const { isLoading, error } = useInitDoc(docId)
+  const { isLoading } = useInitDoc(docId)
 
   // Выделение элементов
   const [selectedEl, setSelectedEl] = useState(null)
-
-  if (error.length) error.forEach(e => console.warn(e))
 
   return (
     <DocumentContext value={{ stageRef, draggingImgRef, isLoading }}>

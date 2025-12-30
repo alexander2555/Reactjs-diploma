@@ -14,11 +14,10 @@ const UserSchema = mongoose.Schema(
     },
     role: {
       type: Number,
-      default: roles.USER,
+      default: roles.GUEST,
     },
   },
-  // createdAt, updatedAt
-  { timestamps: true },
+  { timestamps: true }
 )
 
 const User = mongoose.model('User', UserSchema)

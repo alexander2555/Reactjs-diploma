@@ -1,5 +1,6 @@
+import { addGraphicsItem } from '.'
+
 import { proxy } from '../../proxy'
-import { addGraphicsItem } from './add-graphics-item'
 
 export const graphicsUploadAsync = elData => async dispatch => {
   const { res, err } = await proxy.createElelement(elData)

@@ -1,12 +1,19 @@
 const express = require('express')
-const { getDocEls, getDocElById, createDocEl, updateDocEl, deleteDocEl } = require('../controllers/docEl')
+const auth = require('../middlewares/auth')
+const optionalAuth = require('../middlewares/optionalAuth')
+const {
+  getDocEls,
+  getDocElById,
+  createDocEl,
+  updateDocEl,
+  deleteDocEl,
+} = require('../controllers/docEl')
 const router = express.Router({ mergeParams: true })
 
-router.get('/', getDocEls)
-router.get('/:id', getDocElById)
-router.post('/', createDocEl)
-router.patch('/:id', updateDocEl)
-router.delete('/:id', deleteDocEl)
+router.get('/', optionalAuth, getDocEls)
+router.get('/:id', optionalAuth, getDocElById)
+router.post('/', auth, createDocEl)
+router.patch('/:id', auth, updateDocEl)
+router.delete('/:id', auth, deleteDocEl)
 
 module.exports = router
-
