@@ -1,4 +1,5 @@
-import { removeGraphicsItem } from './remove-graphics-item'
+import { removeGraphicsItem } from '.'
+
 import { proxy } from '../../proxy'
 
 export const graphicsRemoveAsync = elId => async dispatch => {

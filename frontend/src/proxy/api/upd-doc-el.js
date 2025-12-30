@@ -1,24 +1,40 @@
-import { API_URL } from '../constants'
+// интеграция: прежний запрос через json-server (порт 3000)
+// export const updDocEl = (docElements = []) =>
+//   Promise.all(
+//     docElements.map(el =>
+//       fetch(`${API_URL}doc_el/${el.id}`, {
+//         method: 'PATCH',
+//         headers: { 'Content-Type': 'application/json' },
+//         body: JSON.stringify(el),
+//       }),
+//     ),
+//   )
+//     .then(resp => {
+//       if (!resp?.length) return []
+//       const failed = resp.filter(r => !r.ok)
+//       if (failed.length) {
+//         throw new Error(failed.map(f => f.statusText).join('; '))
+//       }
+//       return Promise.all(resp.map(r => r.json()))
+//     })
+//     .catch(err => {
+//       console.error('[API] Patching document elements errors:', err)
+//       return null
+//     })
+
+import { apiRequest } from '../../utils/api'
 
 export const updDocEl = (docElements = []) =>
   Promise.all(
     docElements.map(el =>
-      fetch(`${API_URL}doc_el/${el.id}`, {
+      apiRequest(`doc_el/${el.id}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(el),
+        body: el,
       }),
     ),
   )
-    .then(resp => {
-      if (!resp?.length) return []
-      const failed = resp.filter(r => !r.ok)
-      if (failed.length) {
-        throw new Error(failed.map(f => f.statusText).join('; '))
-      }
-      return Promise.all(resp.map(r => r.json()))
-    })
+    .then(resp => resp)
     .catch(err => {
-      console.error('[API] Patching document elements errors:', err)
+      console.error('[API] Patching document elements errors (integration):', err)
       return null
     })

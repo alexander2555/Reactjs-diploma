@@ -5,37 +5,38 @@
  * @param {authPassword: string}
  * @returns {error: string|null, res: object|null} - объект пользователя или null
  */
-import { getUser } from '../api'
+
+// интеграция: прежняя авторизация через локальный proxy/getUser
+// import { getUser } from '../api'
+// import { sessions } from '../sessions'
+// export const login = async (authLogin, authPassword) => { ... }
+
+import { apiRequest } from '../../utils/api'
 import { sessions } from '../sessions'
 
 export const login = async (authLogin, authPassword) => {
-  const user = await getUser(authLogin)
+  try {
+    const response = await apiRequest('login', {
+      method: 'POST',
+      body: { login: authLogin, password: authPassword },
+    })
 
-  if (!user) {
+    // backend возвращает { user }, apiRequest вернёт user
+    const user = response?.user ? response.user : response
+
+    const hash = sessions.create({ login: user.login })
+
     return {
-      err: 'User not found',
+      err: null,
+      res: {
+        ...user,
+        session: hash,
+      },
+    }
+  } catch (err) {
+    return {
+      err: err.message || 'Login error',
       res: null,
     }
-  }
-
-  const { password, id, login, role_id } = user
-
-  if (password !== authPassword) {
-    return {
-      err: 'Invalid password',
-      res: null,
-    }
-  }
-
-  const hash = sessions.create({ login })
-
-  return {
-    err: null,
-    res: {
-      id,
-      login,
-      roleId: role_id,
-      session: hash,
-    },
   }
 }

@@ -1,7 +1,12 @@
 const mongoose = require('mongoose')
 
 const DocElSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+    default: () => new mongoose.Types.ObjectId().toString(),
+  },
   doc_id: { type: String, required: true },
   el_id: { type: String, required: true },
   position: {

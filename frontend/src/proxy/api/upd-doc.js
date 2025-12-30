@@ -1,21 +1,30 @@
-import { nowDateTime } from '../../utils'
-import { API_URL } from '../constants'
+// интеграция: прежний запрос через json-server (порт 3000)
+// export const updDoc = (id, docData) =>
+//   fetch(`${API_URL}documents/${id}`, {
+//     method: 'PATCH',
+//     headers: {
+//       'Content-Type': 'application/json; charset=UTF-8',
+//     },
+//     body: JSON.stringify({ ...docData, updated_at: nowDateTime() }),
+//   })
+//     .then(resp => {
+//       if (resp.ok) {
+//         return resp.json()
+//       }
+//       throw new Error(resp.statusText)
+//     })
+//     .catch(err => {
+//       console.error('[API] Patching document', err)
+//       return null
+//     })
+
+import { apiRequest } from '../../utils/api'
 
 export const updDoc = (id, docData) =>
-  fetch(`${API_URL}documents/${id}`, {
+  apiRequest(`documents/${id}`, {
     method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-    body: JSON.stringify({ ...docData, updated_at: nowDateTime() }),
+    body: docData,
+  }).catch(err => {
+    console.error('[API] Patching document (integration)', err)
+    return null
   })
-    .then(resp => {
-      if (resp.ok) {
-        return resp.json()
-      }
-      throw new Error(resp.statusText)
-    })
-    .catch(err => {
-      console.error('[API] Patching document', err)
-      return null
-    })

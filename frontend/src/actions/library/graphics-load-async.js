@@ -1,4 +1,5 @@
-import { setGraphics } from './set-graphics'
+import { setGraphics } from '.'
+
 import { proxy } from '../../proxy'
 
 export const graphicsLoadAsync = isCancelled => async dispatch => {

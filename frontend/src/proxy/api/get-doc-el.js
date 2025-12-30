@@ -1,14 +1,23 @@
-import { API_URL } from '../constants'
+// интеграция: прежний запрос через json-server (порт 3000)
+// export const getDocEl = elId =>
+//   fetch(`${API_URL}doc_el${elId ? '?el_id=' + elId : ''}`)
+//     .then(resp => {
+//       if (resp.ok) {
+//         return resp.json()
+//       }
+//       throw new Error(resp.statusText)
+//     })
+//     .catch(err => {
+//       console.error('[API] Fetching dcoument elements', err)
+//       return null
+//     })
 
-export const getDocEl = elId =>
-  fetch(`${API_URL}doc_el${elId ? '?el_id=' + elId : ''}`)
-    .then(resp => {
-      if (resp.ok) {
-        return resp.json()
-      }
-      throw new Error(resp.statusText)
-    })
-    .catch(err => {
-      console.error('[API] Fetching dcoument elements', err)
-      return null
-    })
+import { apiRequest } from '../../utils/api'
+
+export const getDocEl = elId => {
+  const path = elId ? `doc_el?el_id=${elId}` : 'doc_el'
+  return apiRequest(path).catch(err => {
+    console.error('[API] Fetching document elements (integration)', err)
+    return null
+  })
+}

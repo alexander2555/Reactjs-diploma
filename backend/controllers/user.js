@@ -5,8 +5,13 @@ const ROLES = require('../constants/roles')
 
 // Регистрация
 async function register(login, pass) {
-  if (!pass) {
-    throw new Error('[REGISTER] Password is required!')
+  if (!login || !pass) {
+    throw new Error('[REGISTER] Login and password are required!')
+  }
+
+  const exists = await User.findOne({ login })
+  if (exists) {
+    throw new Error('[REGISTER] User already exists!')
   }
 
   const passHash = await bcrypt.hash(pass, 10)
@@ -19,6 +24,10 @@ async function register(login, pass) {
 
 // Авторизация
 async function login(login, pass) {
+  if (!login || !pass) {
+    throw new Error('[LOGIN] Login and password are required!')
+  }
+
   const user = await User.findOne({ login })
 
   if (!user) {
@@ -34,6 +43,17 @@ async function login(login, pass) {
   const token = generate({ id: user.id })
 
   return { user, token }
+}
+
+// Текущий пользователь по токену
+async function me(userId) {
+  const user = await User.findById(userId)
+
+  if (!user) {
+    throw new Error('[ME] User not found!')
+  }
+
+  return user
 }
 
 // Получение пользователей
@@ -61,4 +81,4 @@ function getRoles() {
 //   return User.findByIdAndUpdate(id, userData, { returnDocument: 'after' })
 // }
 
-module.exports = { register, login, getUsers, getRoles }
+module.exports = { register, login, me, getUsers, getRoles }

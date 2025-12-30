@@ -1,12 +1,18 @@
 const express = require('express')
-const { getElements, getElementById, createElement, updateElement, deleteElement } = require('../controllers/element')
+const auth = require('../middlewares/auth')
+const {
+  getElements,
+  getElementById,
+  createElement,
+  updateElement,
+  deleteElement,
+} = require('../controllers/element')
 const router = express.Router({ mergeParams: true })
 
-router.get('/', getElements)
-router.get('/:id', getElementById)
-router.post('/', createElement)
-router.patch('/:id', updateElement)
-router.delete('/:id', deleteElement)
+router.get('/', auth, getElements)
+router.get('/:id', auth, getElementById)
+router.post('/', auth, createElement)
+router.patch('/:id', auth, updateElement)
+router.delete('/:id', auth, deleteElement)
 
 module.exports = router
-

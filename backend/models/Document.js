@@ -1,7 +1,12 @@
 const mongoose = require('mongoose')
 
 const DocumentSchema = new mongoose.Schema({
-  id: { type: String, required: true, unique: true },
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+    default: () => new mongoose.Types.ObjectId().toString(),
+  },
   title: { type: String, required: true },
   description: { type: String },
   updated_at: { type: String },

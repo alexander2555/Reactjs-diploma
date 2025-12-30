@@ -14,7 +14,7 @@ router.get('/', auth, hasRole([ROLES.ADMIN]), async (req, res) => {
   res.send({ data: users.map(mapUser) })
 })
 
-router.get('/roles', auth, hasRole([ROLES.ADMIN, ROLES.MASTER]), (req, res) => {
+router.get('/roles', (req, res) => {
   const roles = getRoles()
 
   res.send({ data: roles })
