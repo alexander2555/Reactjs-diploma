@@ -1,20 +1,21 @@
 import { setGraphics } from '.'
 
-import { proxy } from '../../proxy'
+import { apiRequest } from '../../utils/api'
 
 export const graphicsLoadAsync = isCancelled => async dispatch => {
-  const { res, err } = await proxy.fetchElements()
+  try {
+    const res = await apiRequest('elements')
 
-  if (isCancelled) return
+    if (isCancelled) return
 
-  if (err) {
-    console.warn('[ACTIONS] Graphics load error', err)
-    return { err }
+    if (!(res || res?.length)) return { err: '[ACTIONS] Graphics array is empty' }
+
+    dispatch(setGraphics(res))
+
+    return { err: null }
+  } catch (err) {
+    if (isCancelled) return
+    console.warn('[ACTIONS] Graphics load error', err.message)
+    return { err: err.message }
   }
-
-  if (!(res || res?.length)) ({ err: '[ACTIONS] Graphics array is empty' })
-
-  dispatch(setGraphics(res))
-
-  return { err: null }
 }

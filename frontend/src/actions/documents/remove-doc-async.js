@@ -1,6 +1,11 @@
-import { proxy } from '../../proxy'
+import { apiRequest } from '../../utils/api'
 
 export const removeDocAsync = docId => async () => {
-  await proxy.deleteDocument(docId)
-  return proxy.fetchDocs()
+  try {
+    await apiRequest(`documents/${docId}`, { method: 'DELETE' })
+    return { err: null }
+  } catch (err) {
+    console.warn('[ACTIONS] Document deleting', err.message)
+    return { err: err.message }
+  }
 }

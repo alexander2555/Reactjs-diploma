@@ -1,16 +1,14 @@
 import { removeGraphicsItem } from '.'
 
-import { proxy } from '../../proxy'
+import { apiRequest } from '../../utils/api'
 
 export const graphicsRemoveAsync = elId => async dispatch => {
-  const { err } = await proxy.deleteElement(elId)
-
-  if (err) {
-    console.warn('[ACTIONS] Graphics removing error', err)
-    return { err }
+  try {
+    await apiRequest(`elements/${elId}`, { method: 'DELETE' })
+    dispatch(removeGraphicsItem(elId))
+    return { err: null }
+  } catch (err) {
+    console.warn('[ACTIONS] Graphics removing error', err.message)
+    return { err: err.message }
   }
-
-  dispatch(removeGraphicsItem(elId))
-
-  return { err: null }
 }

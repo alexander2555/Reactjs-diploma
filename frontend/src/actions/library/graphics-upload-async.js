@@ -1,16 +1,19 @@
 import { addGraphicsItem } from '.'
 
-import { proxy } from '../../proxy'
+import { apiRequest } from '../../utils/api'
 
 export const graphicsUploadAsync = elData => async dispatch => {
-  const { res, err } = await proxy.createElelement(elData)
+  try {
+    const res = await apiRequest('elements', {
+      method: 'POST',
+      body: elData,
+    })
 
-  if (err) {
-    console.warn('[ACTIONS] Graphics upload error', err)
-    return { err }
+    dispatch(addGraphicsItem(res))
+
+    return { err: null }
+  } catch (err) {
+    console.warn('[ACTIONS] Graphics upload error', err.message)
+    return { err: err.message }
   }
-
-  dispatch(addGraphicsItem(res))
-
-  return { err: null }
 }

@@ -9,7 +9,7 @@ import { useScale, useSelectEl } from '../../../../providers'
 
 import { checkAccess } from '../../../../utils'
 
-import { proxy } from '../../../../proxy'
+import { apiRequest } from '../../../../utils/api'
 import { ROLE, color } from '../../../../constants'
 
 import styles from '../../DocumentPage.module.sass'
@@ -59,14 +59,11 @@ export const RightPanel = () => {
   }
 
   useEffect(() => {
-    proxy.fetchUsers().then(({ res, err }) => {
-      if (err) {
-        console.warn(err)
-        return
-      }
-
-      setEdotors(res.filter(r => checkAccess([ROLE.USER], r.role_id)))
-    })
+    apiRequest('users')
+      .then(res => {
+        setEdotors(res.filter(r => checkAccess([ROLE.EDITOR], r.roleId ?? r.role_id)))
+      })
+      .catch(err => console.warn('[Users load]', err.message))
   }, [])
 
   return (

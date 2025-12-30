@@ -7,7 +7,7 @@ import { GraphicsItem } from './components'
 
 import { useLibrary, useSelectEl } from '../../../../providers'
 
-import { proxy } from '../../../../proxy'
+import { apiRequest } from '../../../../utils/api'
 
 import styles from '../../LibPage.module.sass'
 
@@ -24,7 +24,7 @@ export const GraphicsContainer = () => {
 
     const selectedEl = graphicsLib.find(el => el.id === id)
     // Проверка - задействован ли выделенный элемент в каких-то документах
-    const { res: docElements } = await proxy.fetchDocEl(id)
+    const docElements = await apiRequest(`doc_el?el_id=${id}`)
     const isUsed = docElements?.length
     const canRemove = userId === selectedEl.owner_id || selectedEl.public
 
