@@ -2,16 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { selectUserRole } from '../../selectors'
+import { selectUserId, selectUserRole } from '../../selectors'
 import { removeDocAsync } from '../../actions'
 
 import { Button, Loader } from '../../components'
 import { DocCard } from './components'
 import { MainLayout } from '../../layouts'
 
-import { proxy } from '../../proxy'
-
 import { checkAccess } from '../../utils'
+import { apiRequest } from '../../utils/api'
 
 import { ROLE } from '../../constants'
 
@@ -21,6 +20,7 @@ export const MainPage = () => {
   const nav = useNavigate()
   const dispatch = useDispatch()
 
+  const userId = useSelector(selectUserId)
   const roleId = useSelector(selectUserRole)
   const isCreator = useRef(false)
 
@@ -38,11 +38,24 @@ export const MainPage = () => {
 
     const initGallery = async () => {
       setSelectedDocId(null)
-      const { err, res } = await proxy.fetchDocs()
+      try {
+        const res = await apiRequest('documents')
 
-      setError(err)
+        const withFlags = (res || []).map(d => ({
+          ...d,
+          editable:
+            checkAccess([ROLE.ADMIN], roleId) ||
+            d.owner_id === userId ||
+            d.editor_id === userId,
+          removable: checkAccess([ROLE.ADMIN], roleId) || d.owner_id === userId,
+        }))
 
-      setDocuments(res || [])
+        setError(null)
+        setDocuments(withFlags)
+      } catch (err) {
+        setError(err.message)
+        setDocuments([])
+      }
 
       setIsLoading(false)
     }
@@ -60,12 +73,23 @@ export const MainPage = () => {
 
   const onDocRemove = async () => {
     setIsLoading(true)
-    const { err, res: newDocsList } = await dispatch(removeDocAsync(selectedDocId))
+    const { err } = await dispatch(removeDocAsync(selectedDocId))
 
     setError(err)
 
     if (!err) {
-      setDocuments(newDocsList)
+      setDocuments(prev =>
+        prev
+          .filter(d => d.id !== selectedDocId)
+          .map(d => ({
+            ...d,
+            editable:
+              checkAccess([ROLE.ADMIN], roleId) ||
+              d.owner_id === userId ||
+              d.editor_id === userId,
+            removable: checkAccess([ROLE.ADMIN], roleId) || d.owner_id === userId,
+          })),
+      )
       setSelectedDocId(null)
     }
 

@@ -10,7 +10,7 @@ import { updDoc } from '../api'
 import { sessions } from '../sessions'
 
 export const updateDocument = async (id, data) => {
-  const access = await sessions.checkAccess([ROLE.MASTER, ROLE.ADMIN, ROLE.USER])
+  const access = await sessions.checkAccess([ROLE.MASTER, ROLE.ADMIN, ROLE.EDITOR])
 
   if (!access) {
     return {

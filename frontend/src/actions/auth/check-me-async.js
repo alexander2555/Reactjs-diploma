@@ -1,16 +1,46 @@
 import { setPending, setSession } from '.'
 
-import { proxy } from '../../proxy'
+import { apiRequest } from '../../utils/api'
+import { ROLE } from '../../constants'
 
 export const checkMeAsync = () => async dispatch => {
   dispatch(setPending(true))
-  const { res, err } = await proxy.me()
-
-  if (err) {
+  try {
+    const res = await apiRequest('me')
+    if (res) {
+      const normalized = normalizeUser(res)
+      persistSession(normalized)
+      dispatch(setSession(normalized))
+    }
+  } catch (err) {
     console.warn('[ACTION me async] error:', err.message)
+    clearSession()
+  } finally {
+    dispatch(setPending(false))
   }
+}
 
-  if (res) dispatch(setSession(res))
+function normalizeUser(user) {
+  const roleId = user.roleId ?? user.role_id ?? ROLE.GUEST
+  return { id: user.id, login: user.login, roleId, session: createSessionId() }
+}
 
-  dispatch(setPending(false))
+function persistSession(user) {
+  try {
+    sessionStorage.setItem('sessionData', JSON.stringify(user))
+  } catch (err) {
+    console.warn('[AUTH] persist session', err)
+  }
+}
+
+function clearSession() {
+  try {
+    sessionStorage.removeItem('sessionData')
+  } catch (err) {
+    console.warn('[AUTH] clear session', err)
+  }
+}
+
+function createSessionId() {
+  return Math.random().toString(36).slice(2)
 }

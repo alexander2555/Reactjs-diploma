@@ -9,7 +9,7 @@ import { sessions } from '../sessions'
 import { ROLE } from '../../constants'
 
 export const createElelement = async data => {
-  const access = await sessions.checkAccess([ROLE.MASTER, ROLE.ADMIN, ROLE.USER])
+  const access = await sessions.checkAccess([ROLE.MASTER, ROLE.ADMIN, ROLE.EDITOR])
 
   if (!access) {
     return {

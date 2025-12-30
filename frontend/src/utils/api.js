@@ -1,16 +1,7 @@
 import { API_URL } from '../proxy/constants'
 
-/**
- * Универсальный запрос к backend.
- * Автоматически включает cookies (для auth), сериализует body и парсит JSON.
- */
 export async function apiRequest(path, options = {}) {
-  const {
-    method = 'GET',
-    body,
-    headers = {},
-    credentials = 'include', // нужны cookie для JWT токена
-  } = options
+  const { method = 'GET', body, headers = {}, credentials = 'include' } = options
 
   const fetchOptions = {
     method,
@@ -31,7 +22,8 @@ export async function apiRequest(path, options = {}) {
   try {
     data = await resp.json()
   } catch (e) {
-    // если backend вернул пустой ответ
+    console.warn('[API] Parsing response', e)
+    data = null
   }
 
   const errorFromPayload = data && data.error ? data.error : null
@@ -40,10 +32,9 @@ export async function apiRequest(path, options = {}) {
     throw new Error(errorFromPayload || resp.statusText)
   }
 
-  // если backend оборачивает ответ в { data }, возвращаем содержимое
-  if (data && Object.prototype.hasOwnProperty.call(data, 'data')) {
-    return data.data
-  }
+  // if (data && Object.prototype.hasOwnProperty.call(data, 'data')) {
+  //   return data.data
+  // }
 
   return data
 }

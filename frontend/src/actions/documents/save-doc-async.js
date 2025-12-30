@@ -1,35 +1,39 @@
 import { setDocData } from '.'
 
-import { proxy } from '../../proxy'
+import { apiRequest } from '../../utils/api'
 
 export const saveDocAsync =
   ({ id, elements, ...docData }, nav) =>
   async dispatch => {
-    // Массив запросов на сохранение документа
-    const saveRequests = id
-      ? [proxy.updateDocument(id, docData)]
-      : [proxy.createDocument(docData)]
+    try {
+      const doc =
+        id !== undefined && id !== null
+          ? await apiRequest(`documents/${id}`, { method: 'PATCH', body: docData })
+          : await apiRequest('documents', { method: 'POST', body: docData })
 
-    // Если есть элементы для обновления, добавляем запрос на их обновление
-    if (id && !!elements && elements.length) {
-      saveRequests.push(proxy.updateDocElements(id, elements))
+      if (id && elements && elements.length) {
+        const updatePayload = elements
+          .filter(el => el.update)
+          .map(({ update, ...elData }) => ({ ...elData, doc_id: id }))
+
+        if (updatePayload.length) {
+          await Promise.all(
+            updatePayload.map(el =>
+              apiRequest(`doc_el/${el.id}`, { method: 'PATCH', body: el }),
+            ),
+          )
+        }
+      }
+
+      dispatch(
+        setDocData({
+          updatedAt: doc.updated_at || doc.updatedAt,
+          changed: false,
+        }),
+      )
+
+      if (!id && doc?.id) nav(`/document/${doc.id}`, { replace: true })
+    } catch (err) {
+      console.warn('[ACTIONS] Document saving errors:', err.message)
     }
-
-    const results = await Promise.all(saveRequests)
-
-    const err = results.filter(({ err }) => !!err).map(r => r.err)
-
-    if (err && err.length) {
-      console.warn('[ACTIONS] Document saving errors:', ...err)
-      return
-    }
-
-    dispatch(
-      setDocData({
-        updatedAt: results[0].updated_at,
-        changed: false,
-      }),
-    )
-
-    if (!id) nav(`/document/${id}`, { replace: true })
   }
