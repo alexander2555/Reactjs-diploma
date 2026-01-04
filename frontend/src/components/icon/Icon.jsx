@@ -1,4 +1,4 @@
-import styles from './icon.module.sass'
+import styles from './Icon.module.sass'
 
 export const Icon = ({ className, iconType = 'solid', iconName }) => (
   <div className={styles.icon + (className ? ` ${className}` : '')}>

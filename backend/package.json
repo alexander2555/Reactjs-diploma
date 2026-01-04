@@ -6,10 +6,6 @@
     "start": "node app.js",
     "serve": "nodemon app.js"
   },
-  "keywords": [
-    "node",
-    "javascript"
-  ],
   "author": "Alexander Mamontov <alexander2555@yandex.ru>",
   "license": "ISC",
   "dependencies": {

@@ -10,7 +10,7 @@ const path = require('path')
 const PORT = 3001
 const app = express()
 
-app.use(express.static(path.resolve('..', 'frontend', 'build')))
+app.use(express.static(path.resolve('..', 'frontend', 'dist')))
 
 app.use(cookieParser({ limit: '50mb' }))
 app.use(express.json({ limit: '50mb' }))
@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 
 // Catch-all handler: возвращает index.html для всех GET запросов, которые не являются API запросами
 app.get('/*path', (req, res) => {
-  res.sendFile(path.resolve('..', 'frontend', 'build', 'index.html'))
+  res.sendFile(path.resolve('..', 'frontend', 'dist', 'index.html'))
 })
 
 mongoose.connect(process.env.DB_CONN_STRING).then(() => {

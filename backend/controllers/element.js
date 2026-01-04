@@ -1,5 +1,5 @@
 const Element = require('../models/Element')
-const Doc_el = require('../models/Doc_el')
+const Doc_el = require('../models/Doc_El')
 const {
   canCreateElement,
   canViewElement,

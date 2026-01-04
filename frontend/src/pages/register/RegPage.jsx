@@ -1,15 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useForm } from 'react-hook-form'
 import { Navigate } from 'react-router-dom'
+import { useForm } from 'react-hook-form'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
+
 import { Button, Input, Form, Select } from '../../components'
-import { setAuthError } from '../../actions'
+import { registerAsync, setAuthError } from '../../actions'
 import { selectAuthData } from '../../selectors'
+
 import { ROLE } from '../../constants'
 
 import styles from './RegPage.module.sass'
-import { registerAsync } from '../../actions/auth/register-async'
 
 const regFromSchema = yup.object().shape({
   login: yup

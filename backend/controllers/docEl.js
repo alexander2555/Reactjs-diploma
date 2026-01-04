@@ -1,4 +1,4 @@
-const Doc_el = require('../models/Doc_el')
+const Doc_el = require('../models/Doc_El')
 const Document = require('../models/Document')
 const Element = require('../models/Element')
 

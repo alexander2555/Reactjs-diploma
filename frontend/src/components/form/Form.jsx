@@ -1,4 +1,4 @@
-import styles from './form.module.sass'
+import styles from './Form.module.sass'
 
 export const Form = ({ className, children, ...props }) => {
   return (
