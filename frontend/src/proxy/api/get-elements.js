@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const getElements = id =>
 //   fetch(`${API_URL}elements${id ? '?id=' + id : ''}`)
 //     .then(resp => {
@@ -12,7 +11,7 @@
 //       return []
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const getElements = id => {
   const path = id ? `elements/${id}` : 'elements'

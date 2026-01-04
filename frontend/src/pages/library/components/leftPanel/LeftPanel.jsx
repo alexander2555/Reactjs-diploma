@@ -48,6 +48,12 @@ export const LeftPanel = () => {
       return
     }
 
+    const maxSize = 50 * 1024 * 1024 // 50MB
+    if (file.size > maxSize) {
+      setLibError('Размер файла не должен превышать 50MB.')
+      return
+    }
+
     const reader = new FileReader()
     reader.onloadend = () => setselectePreview(reader.result)
     reader.readAsDataURL(file)
@@ -89,12 +95,15 @@ export const LeftPanel = () => {
     <>
       <div className={styles['input-group-file']} data-file={selectedGraphicsFile?.name}>
         <strong>Добавить в библиотеку</strong>
+        <small className={styles['input-file-small']}>
+          Поддерживаются: PNG, JPG, JPEG
+        </small>
         <Input
           label={selectedGraphicsFile ? 'Выбрать другой файл' : 'Выбрать файл'}
           type='file'
           name='file-upload'
           className={styles['input-file']}
-          accept='image/png, image/jpeg'
+          accept='image/png,image/jpeg,image/jpg'
           onChange={handleFileSelect}
           disabled={!!libLoading}
         />

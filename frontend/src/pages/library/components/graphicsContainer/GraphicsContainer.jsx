@@ -7,7 +7,7 @@ import { GraphicsItem } from './components'
 
 import { useLibrary, useSelectEl } from '../../../../providers'
 
-import { apiRequest } from '../../../../utils/api'
+import { apiRequest } from '../../../../utils/api-request'
 
 import styles from '../../LibPage.module.sass'
 

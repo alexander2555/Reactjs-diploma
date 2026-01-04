@@ -1,4 +1,4 @@
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const removeDocAsync = docId => async () => {
   try {

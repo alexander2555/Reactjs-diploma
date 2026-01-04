@@ -1,5 +1,5 @@
 const Element = require('../models/Element')
-const DocEl = require('../models/DocEl')
+const Doc_el = require('../models/Doc_el')
 const {
   canCreateElement,
   canViewElement,
@@ -7,87 +7,91 @@ const {
   canDeleteElement,
 } = require('../helpers/access')
 
-// REFACTOR: проверки прав на действия с элементами
-exports.getElements = async (req, res) => {
-  if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
+const { mapEl } = require('../helpers/map')
+
+const getElements = async (req, res) => {
+  // if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
 
   const elements = await Element.find().lean()
-  const filtered = elements.filter((el) => canViewElement(req.user, el))
+  // const filtered = elements.filter((el) => canViewElement(req.user, el))
 
-  res.send({ data: filtered })
+  res.status(200).send(elements.map(mapEl))
 }
 
-exports.getElementById = async (req, res) => {
+const getElementById = async (req, res) => {
   if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
 
-  const el = await Element.findOne({ id: req.params.id }).lean()
-  if (!el) return res.status(404).send({ error: 'Element not found' })
-  if (!canViewElement(req.user, el))
-    return res.status(403).send({ error: 'Forbidden' })
+  const el = await Element.findOne({ _id: req.params.id }).lean()
 
-  res.send({ data: el })
+  if (!el) return res.status(404).send({ error: 'Element not found' })
+
+  if (!canViewElement(req.user, el)) return res.status(403).send({ error: 'Forbidden' })
+
+  res.status(200).send(mapEl(el))
 }
 
-exports.createElement = async (req, res) => {
+const createElement = async (req, res) => {
   try {
     if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
-    if (!canCreateElement(req.user))
-      return res.status(403).send({ error: 'Forbidden' })
 
-    const payload = {
+    if (!canCreateElement(req.user)) return res.status(403).send({ error: 'Forbidden' })
+
+    const newEl = await Element.create({
       ...req.body,
       owner_id: req.user.id,
-      public: !!req.body.public,
-    }
+    })
 
-    const el = await Element.create(payload)
-    res.status(201).send({ data: el })
+    res.status(201).send(mapEl(newEl.toObject()))
   } catch (e) {
     res.status(400).send({ error: e.message })
   }
 }
 
-exports.updateElement = async (req, res) => {
+const updateElement = async (req, res) => {
   try {
-    const el = await Element.findOne({ id: req.params.id })
-    if (!el) return res.status(404).send({ error: 'Element not found' })
     if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
-    if (!canEditElement(req.user, el))
-      return res.status(403).send({ error: 'Forbidden' })
 
-    const update = {}
-    if (req.body.title !== undefined) update.title = req.body.title
-    if (req.body.description !== undefined)
-      update.description = req.body.description
-    if (req.body.image_url !== undefined) update.image_url = req.body.image_url
-    if (req.body.public !== undefined) update.public = req.body.public
+    const el = await Element.findOne({ _id: req.params.id })
 
-    const updated = await Element.findOneAndUpdate(
-      { id: req.params.id },
-      update,
-      { new: true }
-    )
-    res.send({ data: updated })
+    if (!el) return res.status(404).send({ error: 'Element not found' })
+
+    if (!canEditElement(req.user, el)) return res.status(403).send({ error: 'Forbidden' })
+
+    const updatedEl = await Element.findOneAndUpdate({ _id: req.params.id }, req.body, {
+      new: true,
+    })
+    res.status(200).send(mapEl(updatedEl.toObject()))
   } catch (e) {
     res.status(400).send({ error: e.message })
   }
 }
 
-exports.deleteElement = async (req, res) => {
+const deleteElement = async (req, res) => {
   try {
-    const el = await Element.findOne({ id: req.params.id })
-    if (!el) return res.status(404).send({ error: 'Element not found' })
+    const el = await Element.findOne({ _id: req.params.id })
+
     if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
+
+    if (!el) return res.status(404).send({ error: 'Element not found' })
+
     if (!canDeleteElement(req.user, el))
       return res.status(403).send({ error: 'Forbidden' })
 
-    const used = await DocEl.findOne({ el_id: req.params.id })
-    if (used)
-      return res.status(400).send({ error: 'Element is used in document' })
+    const isUsed = await Doc_el.findOne({ el_id: req.params.id })
+    if (isUsed) return res.status(400).send({ error: 'Element is used' })
 
-    await Element.deleteOne({ id: req.params.id })
-    res.send({ error: null })
+    await Element.deleteOne({ _id: req.params.id })
+
+    res.status(204).send()
   } catch (e) {
     res.status(400).send({ error: e.message })
   }
+}
+
+module.exports = {
+  getElements,
+  getElementById,
+  createElement,
+  updateElement,
+  deleteElement,
 }

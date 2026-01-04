@@ -12,11 +12,11 @@ const app = express()
 
 app.use(express.static(path.resolve('..', 'frontend', 'build')))
 
-app.use(cookieParser())
-app.use(express.json())
+app.use(cookieParser({ limit: '50mb' }))
+app.use(express.json({ limit: '50mb' }))
 
 app.use('/api', routes)
-app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 
 // Catch-all handler: возвращает index.html для всех GET запросов, которые не являются API запросами
 app.get('/*path', (req, res) => {

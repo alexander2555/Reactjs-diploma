@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const removeDoc = id =>
 //   fetch(`${API_URL}documents/${id}`, {
 //     method: 'DELETE',
@@ -12,7 +11,7 @@
 //       return false
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const removeDoc = id =>
   apiRequest(`documents/${id}`, { method: 'DELETE' })

@@ -4,10 +4,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { resetDocData, setDocData } from '../actions'
 import { selectUserId, selectUserRole } from '../selectors'
 
-import { checkAccess } from '../utils'
+import { checkAccess, apiRequest } from '../utils'
 
 import { ROLE } from '../constants'
-import { apiRequest } from '../utils/api'
 
 export const useInitDoc = docId => {
   const dispatch = useDispatch()
@@ -23,7 +22,7 @@ export const useInitDoc = docId => {
       setIsLoading(true)
       try {
         const resDoc = docId
-          ? await fetchDocWithElements(docId)
+          ? await apiRequest(`documents/${docId}`)
           : { title: 'Новый коллаж', owner_id: userId, elements: [] }
 
         if (isCancelled) return
@@ -62,13 +61,4 @@ export const useInitDoc = docId => {
   }, [])
 
   return { isLoading, error }
-}
-
-async function fetchDocWithElements(docId) {
-  const doc = await apiRequest(`documents/${docId}`)
-  const elements = await apiRequest(`doc_el?doc_id=${docId}`)
-  return {
-    ...doc,
-    elements: elements?.map(({ doc_id, ...rest }) => rest) || [],
-  }
 }

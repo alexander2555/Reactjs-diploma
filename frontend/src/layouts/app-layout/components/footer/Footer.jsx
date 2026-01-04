@@ -3,7 +3,7 @@ import styles from './footer.module.sass'
 export const Footer = () => (
   <>
     <span className={styles.copyrights}>
-      &copy; {new Date().getFullYear()}&nbsp;Footer text
+      &copy; 2025-{new Date().getFullYear()}&nbsp;Alexander Mamontov
     </span>
   </>
 )

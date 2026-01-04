@@ -7,9 +7,8 @@ import { Button, Icon, Input, Select } from '../../../../components'
 import { selectDocument, selectUserId, selectUserRole } from '../../../../selectors'
 import { useScale, useSelectEl } from '../../../../providers'
 
-import { checkAccess } from '../../../../utils'
+import { checkAccess, apiRequest } from '../../../../utils'
 
-import { apiRequest } from '../../../../utils/api'
 import { ROLE, color } from '../../../../constants'
 
 import styles from '../../DocumentPage.module.sass'
@@ -23,7 +22,7 @@ export const RightPanel = () => {
   const userId = useSelector(selectUserId)
 
   // Список потенциальных редакторов
-  const [editors, setEdotors] = useState([])
+  const [editors, setEditors] = useState([])
 
   // Уровень доступа пользователя сессии
   const ownerRole = checkAccess([ROLE.MASTER], roleId) && userId === doc.owner_id
@@ -38,15 +37,28 @@ export const RightPanel = () => {
   const onElRemove = () => {
     dispatch(
       setDocData({
-        elements: [...doc.elements.filter(el => el.id !== selectedEl)],
+        elements: doc.elements
+          .filter(({ id, create }) => !(id === selectedEl && create))
+          .map(el => (el.id === selectedEl ? { ...el, delete: true } : el)),
         changed: true,
       }),
     )
+
     setSelectedEl(null)
   }
 
   const onDocClear = () => {
-    dispatch(setDocData({ elements: [], changed: true }))
+    const deletedElements = doc.elements
+      .filter(el => !el.create)
+      .map(el => ({ ...el, delete: true }))
+
+    dispatch(
+      setDocData({
+        elements: deletedElements,
+        changed: deletedElements.length > 0,
+      }),
+    )
+
     setSelectedEl(null)
   }
 
@@ -59,11 +71,13 @@ export const RightPanel = () => {
   }
 
   useEffect(() => {
-    apiRequest('users')
-      .then(res => {
-        setEdotors(res.filter(r => checkAccess([ROLE.EDITOR], r.roleId ?? r.role_id)))
-      })
-      .catch(err => console.warn('[Users load]', err.message))
+    if ([ROLE.MASTER, ROLE.ADMIN].includes(roleId)) {
+      apiRequest('users')
+        .then(res => {
+          setEditors(res.filter(r => checkAccess([ROLE.EDITOR], r.roleId)))
+        })
+        .catch(err => console.warn('[DOCUMENT] Fetching editors', err.message))
+    }
   }, [])
 
   return (
@@ -87,7 +101,7 @@ export const RightPanel = () => {
             options={Object.entries(color)}
             onChange={onDocBgColorChange}
           />
-          {!!doc.elements.length && (
+          {!!doc.elements.filter(el => !el.delete).length && (
             <>
               <Button className={styles['btn-clear']} onClick={onDocClear}>
                 Очистить холст

@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { graphicsLoadAsync, setDocData } from '../../../../actions'
-import { selectDocument, selectGraphicsLib } from '../../../../selectors'
-
 import { Stage, Layer, Rect } from 'react-konva'
 import { useResizeObserver } from '../../../../hooks/useResizeObserver'
+
+import { graphicsLoadAsync, setDocData } from '../../../../actions'
+import { selectDocument, selectGraphicsLib } from '../../../../selectors'
 
 import { Graphics, Loader } from '../../../../components'
 import {
@@ -45,9 +45,7 @@ export const CanvasContainer = ({ className }) => {
 
   if (libError) console.warn(libError)
 
-  /**
-   * Перемещение холста
-   */
+  // Перемещение холста
   const [stagePos, setStagePosition] = useState({ x: 0, y: 0 })
 
   const handleDragStart = ({ target }) => {
@@ -57,9 +55,7 @@ export const CanvasContainer = ({ className }) => {
     setStagePosition(target.getStage().position())
   }
 
-  /**
-   * Масштаб
-   */
+  // Масштаб холста
   const { scale, setScale } = useScale()
 
   const handleWheel = ({ evt }) => {
@@ -81,9 +77,7 @@ export const CanvasContainer = ({ className }) => {
     })
   }
 
-  /**
-   * Добавление элемента на холст
-   */
+  // Добавление элемента на холст
   const handleDrop = e => {
     if (!doc.editable) return
 
@@ -102,7 +96,8 @@ export const CanvasContainer = ({ className }) => {
               width: libRef.current[elId]?.width || 100,
               height: libRef.current[elId]?.height || 100,
             },
-            new: true,
+            rotation: 0,
+            create: true,
           },
         ],
         changed: true,
@@ -110,9 +105,7 @@ export const CanvasContainer = ({ className }) => {
     )
   }
 
-  /**
-   * Выделение элементов
-   */
+  // Выделение элементов
   const { selectedEl, setSelectedEl } = useSelectEl() || {}
   // Снять выделение при клике на холст
   const checkUnselect = ({ target }) => {
@@ -121,9 +114,7 @@ export const CanvasContainer = ({ className }) => {
     }
   }
 
-  /**
-   * Размер холста
-   */
+  // Размер холста
   const [stageSize, setStageSize] = useState({ width: 0, height: 0 })
   // Отслеживание изменения размеров окна
   useResizeObserver(
@@ -180,16 +171,18 @@ export const CanvasContainer = ({ className }) => {
               )
               /***/
             }
-            {doc.elements.map(el => (
-              <Graphics
-                key={el.id}
-                element={el}
-                imgUrl={graphicsLib?.find(g => g.id === el.el_id)?.image_url}
-                libRef={libRef}
-                isSelected={selectedEl === el.id}
-                onSelect={() => setSelectedEl(el.id)}
-              />
-            ))}
+            {doc.elements
+              .filter(el => !el.delete)
+              .map(el => (
+                <Graphics
+                  key={el.id}
+                  element={el}
+                  imgUrl={graphicsLib?.find(g => g.id === el.el_id)?.image_url}
+                  libRef={libRef}
+                  isSelected={selectedEl === el.id}
+                  onSelect={() => setSelectedEl(el.id)}
+                />
+              ))}
           </Layer>
         </Stage>
       )}

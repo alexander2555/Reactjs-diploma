@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const addDoc = docData =>
 //   fetch(`${API_URL}documents`, {
 //     method: 'POST',
@@ -21,13 +20,13 @@
 //       return null
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const addDoc = docData =>
   apiRequest('documents', {
     method: 'POST',
     body: docData,
   }).catch(err => {
-    console.error('[API] Adding document (integration)', err)
+    console.error('[API] Adding document', err)
     return null
   })

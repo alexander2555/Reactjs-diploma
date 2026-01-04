@@ -1,6 +1,6 @@
 import { addGraphicsItem } from '.'
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const graphicsUploadAsync = elData => async dispatch => {
   try {
@@ -13,7 +13,7 @@ export const graphicsUploadAsync = elData => async dispatch => {
 
     return { err: null }
   } catch (err) {
-    console.warn('[ACTIONS] Graphics upload error', err.message)
+    console.warn('[ACTIONS] Graphics upload', err.message)
     return { err: err.message }
   }
 }

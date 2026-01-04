@@ -20,12 +20,13 @@ export const Graphics = ({ element, libRef, isSelected, onSelect, imgUrl }) => {
   const {
     position: { x, y },
     size: { width, height },
+    rotation,
     el_id,
     id,
   } = element
 
   const img = libRef.current[el_id]
-  // резервный <img>, если елемент библиотеки недоступен пользователю и не загружен
+  // резервный <img>, если элемент библиотеки недоступен пользователю и не загружен
   const [reservImg] = useImage(imgUrl, 'anonymous')
 
   const handleElDragStart = () => {
@@ -48,18 +49,38 @@ export const Graphics = ({ element, libRef, isSelected, onSelect, imgUrl }) => {
     )
   }
 
-  // TODO - добавить изменение размеров и угла поворота - установить флаг update
   const handleTransformEnd = ({ target }) => {
-    const el = target
-    console.log(el.rotation())
+    const rotation = target.rotation()
+    const position = {
+      x: target.x(),
+      y: target.y(),
+    }
+    const size = {
+      width: width * target.scaleX(),
+      height: height * target.scaleY(),
+    }
+
+    // Возвращаем масштаб к 1х1 после изменения фактического размера
+    target.scaleX(1)
+    target.scaleY(1)
+
+    dispatch(
+      setDocData({
+        elements: doc.elements.map(el =>
+          el.id === id ? { ...el, position, rotation, size, update: true } : el,
+        ),
+        changed: true,
+      }),
+    )
   }
 
   const commonProps = {
     ref: elRef,
-    x: x,
-    y: y,
-    width: width,
-    height: height,
+    x,
+    y,
+    width,
+    height,
+    rotation,
     draggable: doc.editable,
     onDragStart: handleElDragStart,
     onDragEnd: handleElDragEnd,

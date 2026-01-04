@@ -8,11 +8,11 @@ const UserSchema = mongoose.Schema(
       require: true,
       unique: true,
     },
-    pass: {
+    password: {
       type: String,
       require: true,
     },
-    role: {
+    role_id: {
       type: Number,
       default: roles.GUEST,
     },

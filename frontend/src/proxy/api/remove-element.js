@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const removeElement = id =>
 //   fetch(`${API_URL}elements/${id}`, {
 //     method: 'DELETE',
@@ -12,7 +11,7 @@
 //       return false
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const removeElement = id =>
   apiRequest(`elements/${id}`, { method: 'DELETE' })

@@ -9,8 +9,7 @@ import { Button, Loader } from '../../components'
 import { DocCard } from './components'
 import { MainLayout } from '../../layouts'
 
-import { checkAccess } from '../../utils'
-import { apiRequest } from '../../utils/api'
+import { checkAccess, apiRequest } from '../../utils'
 
 import { ROLE } from '../../constants'
 
@@ -41,27 +40,35 @@ export const MainPage = () => {
       try {
         const res = await apiRequest('documents')
 
-        const withFlags = (res || []).map(d => ({
-          ...d,
-          editable:
-            checkAccess([ROLE.ADMIN], roleId) ||
-            d.owner_id === userId ||
-            d.editor_id === userId,
-          removable: checkAccess([ROLE.ADMIN], roleId) || d.owner_id === userId,
-        }))
+        const docs = (res || [])
+          .map(doc => {
+            const isRemovable =
+              checkAccess([ROLE.ADMIN], roleId) || doc.owner_id === userId
+            const isEditable = isRemovable || doc.editor_id === userId
+            if (isEditable || doc.public) {
+              return {
+                ...doc,
+                editable: isEditable,
+                removable: isRemovable,
+              }
+            }
+
+            return null
+          })
+          .filter(Boolean)
 
         setError(null)
-        setDocuments(withFlags)
+        setDocuments(docs)
       } catch (err) {
         setError(err.message)
         setDocuments([])
+      } finally {
+        setIsLoading(false)
       }
-
-      setIsLoading(false)
     }
 
     initGallery()
-  }, [roleId])
+  }, [roleId, userId])
 
   const onDocCardSelect = id => {
     setSelectedDocId(id)

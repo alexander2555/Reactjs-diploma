@@ -1,6 +1,6 @@
 import { setGraphics } from '.'
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const graphicsLoadAsync = isCancelled => async dispatch => {
   try {
@@ -8,14 +8,14 @@ export const graphicsLoadAsync = isCancelled => async dispatch => {
 
     if (isCancelled) return
 
-    if (!(res || res?.length)) return { err: '[ACTIONS] Graphics array is empty' }
+    if (!res?.length) return { err: '[ACTIONS] Graphics array is empty' }
 
     dispatch(setGraphics(res))
 
     return { err: null }
   } catch (err) {
     if (isCancelled) return
-    console.warn('[ACTIONS] Graphics load error', err.message)
+    console.warn('[ACTIONS] Graphics loading', err.message)
     return { err: err.message }
   }
 }

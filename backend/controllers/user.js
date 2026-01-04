@@ -1,10 +1,11 @@
 const User = require('../models/User')
+
 const bcrypt = require('bcrypt')
 const { generate } = require('../helpers/token')
+
 const ROLES = require('../constants/roles')
 
-// Регистрация
-async function register(login, pass) {
+const register = async (login, pass, role) => {
   if (!login || !pass) {
     throw new Error('[REGISTER] Login and password are required!')
   }
@@ -16,14 +17,13 @@ async function register(login, pass) {
 
   const passHash = await bcrypt.hash(pass, 10)
 
-  const user = await User.create({ login, pass: passHash })
+  const user = await User.create({ login, password: passHash, role_id: role })
   const token = generate({ id: user.id })
 
   return { user, token }
 }
 
-// Авторизация
-async function login(login, pass) {
+const login = async (login, pass) => {
   if (!login || !pass) {
     throw new Error('[LOGIN] Login and password are required!')
   }
@@ -34,7 +34,7 @@ async function login(login, pass) {
     throw new Error('[LOGIN] User not found!')
   }
 
-  const isPassMatch = await bcrypt.compare(pass, user.pass)
+  const isPassMatch = await bcrypt.compare(pass, user.password)
 
   if (!isPassMatch) {
     throw new Error('[LOGIN] Wrong passsword!')
@@ -45,24 +45,11 @@ async function login(login, pass) {
   return { user, token }
 }
 
-// Текущий пользователь по токену
-async function me(userId) {
-  const user = await User.findById(userId)
-
-  if (!user) {
-    throw new Error('[ME] User not found!')
-  }
-
-  return user
-}
-
-// Получение пользователей
-function getUsers() {
+const getUsers = () => {
   return User.find()
 }
 
-// Получение ролей
-function getRoles() {
+const getRoles = () => {
   return [
     { id: ROLES.ADMIN, name: 'Админ' },
     { id: ROLES.MASTER, name: 'Мастер' },
@@ -71,14 +58,12 @@ function getRoles() {
   ]
 }
 
-// Удаление пользователя
-// function deleteUser(id) {
+// const deleteUser = async (id) => {
 //   return User.deleteOne({ _id: id })
 // }
 
-// Редактирование пользователя
-// function updateUser(id, userData) {
+// const updateUser = async (id, userData) => {
 //   return User.findByIdAndUpdate(id, userData, { returnDocument: 'after' })
 // }
 
-module.exports = { register, login, me, getUsers, getRoles }
+module.exports = { register, login, getUsers, getRoles }

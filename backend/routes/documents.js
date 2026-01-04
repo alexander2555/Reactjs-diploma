@@ -1,6 +1,8 @@
 const express = require('express')
+
 const auth = require('../middlewares/auth')
-const optionalAuth = require('../middlewares/optionalAuth')
+const optionalAuth = require('../middlewares/optional-auth')
+
 const {
   getDocuments,
   getDocumentById,

@@ -28,6 +28,9 @@ body {
   min-width: 320px;
   color: var(--text-color, #fff);
   background-color: var(--bg-color, #1a1a1a);
+
+  /* Для устранения ложного срабатывания drag&drop при случайном клике */
+  user-select: none;
 }
 
 #root {
@@ -35,7 +38,6 @@ body {
   flex-direction: column;
   height: 100vh;
   min-height: 100%;
-  /* overflow: hidden; */
 }
 
 h1,

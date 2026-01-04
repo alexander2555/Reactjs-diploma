@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const getUsers = id =>
 //   fetch(`${API_URL}users${id || id === 0 ? '?id=' + id : ''}`)
 //     .then(resp => {
@@ -12,10 +11,10 @@
 //       return []
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const getUsers = () =>
   apiRequest('users').catch(err => {
-    console.error('[API] Fetching users (integration)', err)
+    console.error('[API] Fetching users', err)
     return []
   })

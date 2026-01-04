@@ -1,92 +1,156 @@
 const Document = require('../models/Document')
+const Doc_el = require('../models/Doc_el')
+
 const {
   canCreateDoc,
   canViewDoc,
   canEditDoc,
   canDeleteDoc,
-  canPublishDoc,
-  canAssignEditor,
+  canAssignRights,
 } = require('../helpers/access')
 
-// REFACTOR: проверки прав на действия с документами
-exports.getDocuments = async (req, res) => {
+const { mapDoc, mapDocEl } = require('../helpers/map')
+
+const getDocuments = async (req, res) => {
   const documents = await Document.find().lean()
-  const filtered = documents.filter((doc) => canViewDoc(req.user, doc))
+  const filtered = documents.filter(doc => canViewDoc(req.user, doc))
 
-  res.send({ data: filtered })
+  res.send(filtered.map(mapDoc))
 }
 
-exports.getDocumentById = async (req, res) => {
-  const document = await Document.findOne({ id: req.params.id }).lean()
+const getDocumentById = async (req, res) => {
+  const document = await Document.findOne({ _id: req.params.id }).lean()
+
   if (!document) return res.status(404).send({ error: 'Document not found' })
-  if (!canViewDoc(req.user, document))
-    return res.status(403).send({ error: 'Forbidden' })
 
-  res.send({ data: document })
+  if (!canViewDoc(req.user, document)) return res.status(403).send({ error: 'Forbidden' })
+
+  const docEls = await Doc_el.find({ doc_id: document._id }).lean()
+
+  res.send(mapDoc({ ...document, elements: docEls.map(mapDocEl) }))
 }
 
-exports.createDocument = async (req, res) => {
+const createDocument = async (req, res) => {
   try {
     if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
-    if (!canCreateDoc(req.user))
-      return res.status(403).send({ error: 'Forbidden' })
 
-    const payload = {
-      ...req.body,
+    if (!canCreateDoc(req.user)) return res.status(403).send({ error: 'Forbidden' })
+
+    const { elements = [], ...data } = req.body
+
+    const newDoc = {
+      ...data,
       owner_id: req.user.id,
-      editor_id: null,
     }
 
-    const doc = await Document.create(payload)
-    res.status(201).send({ data: doc })
+    const doc = await Document.create(newDoc)
+
+    if (Array.isArray(elements) && elements.length) {
+      // При создании документа удалённые элементы не добавляются
+      const docEls = elements
+        .filter(el => !el.delete)
+        .map(el => ({
+          ...el,
+          doc_id: doc.id,
+        }))
+
+      if (docEls.length) {
+        await Doc_el.insertMany(docEls)
+      }
+    }
+
+    const docEls = await Doc_el.find({ doc_id: doc.id }).lean()
+
+    res.status(201).send(mapDoc({ ...doc.toObject(), elements: docEls.map(mapDocEl) }))
   } catch (e) {
     res.status(400).send({ error: e.message })
   }
 }
 
-exports.updateDocument = async (req, res) => {
+const updateDocument = async (req, res) => {
   try {
-    const doc = await Document.findOne({ id: req.params.id })
-    if (!doc) return res.status(404).send({ error: 'Document not found' })
     if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
+
+    const doc = await Document.findOne({ _id: req.params.id })
+
+    if (!doc) return res.status(404).send({ error: 'Document not found' })
     if (!canEditDoc(req.user, doc))
-      return res.status(403).send({ error: 'Forbidden' })
+      return res.status(403).send({ error: 'Forbidden (can not edit)' })
 
-    const update = {}
-    if (req.body.title !== undefined) update.title = req.body.title
-    if (req.body.description !== undefined)
-      update.description = req.body.description
+    const { elements = [], ...docData } = req.body
 
-    if (req.body.public !== undefined && canPublishDoc(req.user, doc)) {
-      update.public = req.body.public
+    if (docData.public !== undefined) {
+      if (!canAssignRights(req.user, doc)) delete docData.public
+      // return res.status(403).send({ error: 'Forbidden (can not publish/unpublish)' })
     }
 
-    if (req.body.editor_id !== undefined && canAssignEditor(req.user, doc)) {
-      update.editor_id = req.body.editor_id
+    if (docData.editor_id !== undefined) {
+      if (!canAssignRights(req.user, doc)) delete docData.editor_id
+      // return res.status(403).send({ error: 'Forbidden (can not assign editor)' })
     }
 
-    const updated = await Document.findOneAndUpdate(
-      { id: req.params.id },
-      update,
-      { new: true }
-    )
-    res.send({ data: updated })
+    const updatedDoc = await Document.findOneAndUpdate({ _id: req.params.id }, docData, {
+      new: true,
+    }).lean()
+
+    if (Array.isArray(elements) && elements.length) {
+      const toUpdate = elements.filter(el => el.update && !(el.create || el.delete))
+      const toCreate = elements.filter(el => el.create)
+      const toDelete = elements.filter(el => el.delete)
+
+      if (toUpdate.length) {
+        await Promise.all(
+          toUpdate.map(({ id, update, ...elData }) =>
+            Doc_el.findOneAndUpdate({ _id: id }, elData, { new: true }).lean(),
+          ),
+        )
+      }
+
+      if (toCreate.length) {
+        await Doc_el.insertMany(
+          toCreate.map(({ id, create, ...elData }) => ({
+            ...elData,
+            doc_id: doc.id,
+          })),
+        )
+      }
+
+      if (toDelete.length) {
+        await Doc_el.deleteMany({
+          _id: { $in: toDelete.map(el => el.id) },
+        })
+      }
+    }
+
+    const docEls = await Doc_el.find({ doc_id: doc.id }).lean()
+    res.send(mapDoc({ ...updatedDoc, elements: docEls.map(mapDocEl) }))
   } catch (e) {
     res.status(400).send({ error: e.message })
   }
 }
 
-exports.deleteDocument = async (req, res) => {
+const deleteDocument = async (req, res) => {
   try {
-    const doc = await Document.findOne({ id: req.params.id })
-    if (!doc) return res.status(404).send({ error: 'Document not found' })
     if (!req.user) return res.status(401).send({ error: 'Unauthorized' })
-    if (!canDeleteDoc(req.user, doc))
-      return res.status(403).send({ error: 'Forbidden' })
 
-    await Document.deleteOne({ id: req.params.id })
-    res.send({ error: null })
+    const doc = await Document.findOne({ _id: req.params.id })
+
+    if (!doc) return res.status(404).send({ error: 'Document not found' })
+
+    if (!canDeleteDoc(req.user, doc)) return res.status(403).send({ error: 'Forbidden' })
+
+    await Doc_el.deleteMany({ doc_id: doc.id })
+    await Document.deleteOne({ _id: req.params.id })
+    res.status(204).send()
   } catch (e) {
     res.status(400).send({ error: e.message })
   }
+}
+
+module.exports = {
+  getDocuments,
+  getDocumentById,
+  createDocument,
+  updateDocument,
+  deleteDocument,
 }
