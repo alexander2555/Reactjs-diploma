@@ -18,14 +18,14 @@
 
 ### Таблицы БД
 
-| Название      | Поля                                                     | Описание                      |
-| ------------- | -------------------------------------------------------- | ----------------------------- |
-| **users**     | id, login, password, reg_at, role_id                     | Пользователи                  |
-| **roles**     | id, name                                                 | Роли пользователей            |
-| **documents** | id, title, created_at, owner_id, editor_id, public       | Документы (коллажи)           |
-| **elements**  | id, title, url, uploaded_at, owner_id, public, props - ? | Элементы (графика)            |
-| **doc_el**    | id, doc_id, el_id, props                                 | Связь документов с элементами |
-| **sessions**  | id, user_id, token, created_at, expires_at               | Сессии пользователей          |
+| Название      | Поля                                                      | Описание                      |
+| ------------- | --------------------------------------------------------- | ----------------------------- |
+| **users**     | id, login, password, reg_at, role_id                      | Пользователи                  |
+| **roles**     | id, name                                                  | Роли пользователей            |
+| **documents** | id, title, created_at, owner_id, editor_id, public, props | Документы (коллажи)           |
+| **elements**  | id, title, url, uploaded_at, owner_id, public             | Элементы (графика)            |
+| **doc_el**    | id, doc_id, el_id, props                                  | Связь документов с элементами |
+| **sessions**  | id, user_id, token, created_at, expires_at                | Сессии пользователей          |
 
 ---
 

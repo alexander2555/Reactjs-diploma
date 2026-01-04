@@ -1,21 +1,7 @@
 import { ACTION_TYPE } from '../actions'
+import { createDefaultDocState } from '../constants'
 
-const initialDocState = {
-  id: null,
-  title: '',
-  description: '',
-  created_at: null,
-  owner_id: null,
-  editor_id: null,
-  public: false,
-  elements: [],
-  changed: false,
-  size: {
-    width: 800,
-    height: 1000,
-  },
-  bg_color: 'white',
-}
+const initialDocState = createDefaultDocState()
 
 export const docReducer = (state = initialDocState, { type, payload }) => {
   switch (type) {
@@ -29,7 +15,7 @@ export const docReducer = (state = initialDocState, { type, payload }) => {
       return { ...state, public: payload }
     }
     case ACTION_TYPE.RESET_DOC_DATA: {
-      return initialDocState
+      return createDefaultDocState()
     }
     default:
       return state

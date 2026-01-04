@@ -7,15 +7,12 @@ import {
   selectDocument,
   selectUserLogin,
   selectUserRole,
-  selectUserSession,
 } from '../../../../../../selectors'
 import { closeSession, saveDocAsync, setPending } from '../../../../../../actions'
 
+import { apiRequest } from '../../../../../../utils'
+
 import { ROLE } from '../../../../../../constants'
-
-import { proxy } from '../../../../../../proxy'
-
-import { IDocument } from '../../../../../../types'
 
 import styles from './Controls.module.sass'
 
@@ -26,7 +23,6 @@ export const Controls = ({ className, isDocPage }) => {
   const dispatch = useDispatch()
   const location = useLocation()
 
-  const session = useSelector(selectUserSession)
   const roleId = useSelector(selectUserRole)
   const login = useSelector(selectUserLogin)
 
@@ -35,26 +31,23 @@ export const Controls = ({ className, isDocPage }) => {
   const userNameRef = useRef(null)
 
   useEffect(() => {
-    proxy
-      .fetchRoles(roleId)
-      .then(({ res, err }) => {
-        if (err) throw new Error(err)
-
-        userNameRef.current?.setAttribute('data-role', res?.name)
+    apiRequest('users/roles')
+      .then(roles => {
+        const roleName = roles?.find(r => r.id === roleId)?.name
+        if (roleName) {
+          userNameRef.current?.setAttribute('data-role', roleName)
+        }
       })
       .catch(console.warn)
   }, [roleId])
 
   const onSave = () => {
     // nav - для навигации на новый документ
-    const dataForUpdate = Object.fromEntries(
-      Object.keys(IDocument).map(key => [key, docData[key]]),
-    )
-    dispatch(saveDocAsync(dataForUpdate, nav))
+    dispatch(saveDocAsync(docData, nav))
   }
 
   const onSignOut = () => {
-    dispatch(closeSession(session))
+    dispatch(closeSession())
     dispatch(setPending(false))
     nav('/', { replace: true })
   }

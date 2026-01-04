@@ -54,7 +54,6 @@ export const RegPage = () => {
   }
 
   const onSubmit = regData => {
-    console.log(regData)
     dispatch(registerAsync(regData))
     reset()
   }

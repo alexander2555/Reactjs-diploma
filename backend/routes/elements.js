@@ -1,5 +1,7 @@
 const express = require('express')
+
 const auth = require('../middlewares/auth')
+
 const {
   getElements,
   getElementById,
@@ -9,8 +11,8 @@ const {
 } = require('../controllers/element')
 const router = express.Router({ mergeParams: true })
 
-router.get('/', auth, getElements)
-router.get('/:id', auth, getElementById)
+router.get('/', getElements)
+router.get('/:id', getElementById)
 router.post('/', auth, createElement)
 router.patch('/:id', auth, updateElement)
 router.delete('/:id', auth, deleteElement)

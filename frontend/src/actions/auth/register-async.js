@@ -1,8 +1,7 @@
 import { setPending, setAuthError, setSession } from '.'
 
-import { apiRequest } from '../../utils/api'
-import { ROLE } from '../../constants'
-import { getHash } from '../../utils/get-hash'
+import { apiRequest } from '../../utils'
+import { mapUser } from '../../helpers'
 
 export const registerAsync =
   ({ login, password, role }) =>
@@ -14,28 +13,14 @@ export const registerAsync =
         body: { login, password, role: Number(role) },
       })
 
-      const normalized = normalizeUser(user)
-      persistSession(normalized)
+      const newUser = mapUser(user)
 
       dispatch(setAuthError(null))
-      dispatch(setSession(normalized))
+      dispatch(setSession(newUser))
     } catch (err) {
-      console.warn('[Reg action] error:', err.message)
+      console.warn('[ACTIONS] Register', err.message)
       dispatch(setAuthError(err.message))
     } finally {
       dispatch(setPending(false))
     }
   }
-
-function normalizeUser(user) {
-  const roleId = user.roleId ?? user.role_id ?? ROLE.GUEST
-  return { id: user.id, login: user.login, roleId, session: getHash(16) }
-}
-
-function persistSession(user) {
-  try {
-    sessionStorage.setItem('sessionData', JSON.stringify(user))
-  } catch (err) {
-    console.warn('[AUTH] persist session', err)
-  }
-}

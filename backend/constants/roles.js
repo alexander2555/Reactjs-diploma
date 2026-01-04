@@ -1,11 +1,6 @@
-const ADMIN = 0
-const MASTER = 1
-const EDITOR = 2
-const GUEST = 3
-
 module.exports = {
-  ADMIN,
-  MASTER,
-  EDITOR,
-  GUEST,
+  ADMIN: 0,
+  MASTER: 1,
+  EDITOR: 2,
+  GUEST: 3,
 }

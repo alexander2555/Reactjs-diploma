@@ -1,8 +1,7 @@
 import { setPending, setAuthError, setSession } from '.'
 
-import { apiRequest } from '../../utils/api'
-import { ROLE } from '../../constants'
-import { getHash } from '../../utils/get-hash'
+import { apiRequest } from '../../utils'
+import { mapUser } from '../../helpers'
 
 export const loginAsync =
   ({ login, password }) =>
@@ -14,11 +13,10 @@ export const loginAsync =
         body: { login, password },
       })
 
-      const normalized = normalizeUser(user)
-      persistSession(normalized)
+      const loggedInUser = mapUser(user)
 
       dispatch(setAuthError(null))
-      dispatch(setSession(normalized))
+      dispatch(setSession(loggedInUser))
     } catch (err) {
       console.warn('[ACTIONS] Login', err.message)
       dispatch(setAuthError(err.message))
@@ -26,16 +24,3 @@ export const loginAsync =
       dispatch(setPending(false))
     }
   }
-
-function normalizeUser(user) {
-  const roleId = user.roleId ?? ROLE.GUEST
-  return { id: user.id, login: user.login, roleId, session: getHash(16) }
-}
-
-function persistSession(user) {
-  try {
-    sessionStorage.setItem('sessionData', JSON.stringify(user))
-  } catch (err) {
-    console.warn('[AUTH] persist session', err)
-  }
-}

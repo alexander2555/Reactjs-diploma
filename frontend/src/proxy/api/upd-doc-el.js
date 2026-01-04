@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const updDocEl = (docElements = []) =>
 //   Promise.all(
 //     docElements.map(el =>
@@ -22,7 +21,7 @@
 //       return null
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils'
 
 export const updDocEl = (docElements = []) =>
   Promise.all(
@@ -35,6 +34,6 @@ export const updDocEl = (docElements = []) =>
   )
     .then(resp => resp)
     .catch(err => {
-      console.error('[API] Patching document elements errors (integration):', err)
+      console.error('[API] Patching document elements', err)
       return null
     })

@@ -11,7 +11,7 @@
 // import { sessions } from '../sessions'
 // export const login = async (authLogin, authPassword) => { ... }
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 import { sessions } from '../sessions'
 
 export const login = async (authLogin, authPassword) => {
@@ -21,7 +21,6 @@ export const login = async (authLogin, authPassword) => {
       body: { login: authLogin, password: authPassword },
     })
 
-    // backend возвращает { user }, apiRequest вернёт user
     const user = response?.user ? response.user : response
 
     const hash = sessions.create({ login: user.login })

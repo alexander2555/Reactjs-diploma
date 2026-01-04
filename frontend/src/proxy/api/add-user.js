@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const addUser = (login, password, role = 2) =>
 //   fetch(`${API_URL}users`, {
 //     method: 'POST',
@@ -23,13 +22,13 @@
 //       return null
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const addUser = (login, password) =>
   apiRequest('register', {
     method: 'POST',
     body: { login, password },
   }).catch(err => {
-    console.error('[API] Adding user (integration)', err)
+    console.error('[API] Adding user', err)
     return null
   })

@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const getDoc = docId =>
 //   Promise.all([
 //     fetch(`${API_URL}documents?id=${docId}`)
@@ -25,16 +24,16 @@
 //       }),
 //   ])
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils'
 
 export const getDoc = docId =>
   Promise.all([
     apiRequest(`documents/${docId}`).catch(err => {
-      console.error('[API] Fetching document (integration)', err)
+      console.error('[API] Fetching document', err)
       return null
     }),
     apiRequest(`doc_el?doc_id=${docId}`).catch(err => {
-      console.error('[API] Fetching document elements (integration)', err)
+      console.error('[API] Fetching document elements', err)
       return []
     }),
   ])

@@ -1,4 +1,4 @@
-import { API_URL } from '../proxy/constants'
+import { API_URL } from '../constants'
 
 export async function apiRequest(path, options = {}) {
   const { method = 'GET', body, headers = {}, credentials = 'include' } = options
@@ -21,20 +21,15 @@ export async function apiRequest(path, options = {}) {
   let data = null
   try {
     data = await resp.json()
-  } catch (e) {
-    console.warn('[API] Parsing response', e)
+  } catch (_) {
     data = null
   }
 
-  const errorFromPayload = data && data.error ? data.error : null
+  const error = data && data.error ? data.error : null
 
-  if (!resp.ok || errorFromPayload) {
-    throw new Error(errorFromPayload || resp.statusText)
+  if (!resp.ok || error) {
+    throw new Error(error || resp.statusText)
   }
-
-  // if (data && Object.prototype.hasOwnProperty.call(data, 'data')) {
-  //   return data.data
-  // }
 
   return data
 }

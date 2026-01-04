@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const getRoles = id =>
 //   fetch(`${API_URL}roles${id || id === 0 ? '?id=' + id : ''}`)
 //     .then(resp => {
@@ -12,7 +11,7 @@
 //       return []
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const getRoles = () =>
   apiRequest('users/roles').catch(err => {

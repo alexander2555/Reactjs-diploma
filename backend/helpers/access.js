@@ -1,8 +1,8 @@
 const ROLES = require('../constants/roles')
 
-const isAdmin = (user) => user && user.role === ROLES.ADMIN
-const isMaster = (user) => user && user.role === ROLES.MASTER
-const isEditor = (user) => user && user.role === ROLES.EDITOR
+const isAdmin = user => user && user.role_id === ROLES.ADMIN
+const isMaster = user => user && user.role_id === ROLES.MASTER
+const isEditor = user => user && user.role_id === ROLES.EDITOR
 
 function canCreateDoc(user) {
   return isAdmin(user) || isMaster(user)
@@ -35,7 +35,7 @@ function canDeleteDoc(user, doc) {
   return false
 }
 
-function canPublishDoc(user, doc) {
+function canAssignRights(user, doc) {
   if (!doc) return false
   if (isAdmin(user)) return true
   if (!user) return false
@@ -43,13 +43,8 @@ function canPublishDoc(user, doc) {
   return false
 }
 
-function canAssignEditor(user, doc) {
-  // Назначение редактора разрешено админу либо владельцу
-  return canPublishDoc(user, doc)
-}
-
 function canCreateElement(user) {
-  return !!user && [ROLES.ADMIN, ROLES.MASTER, ROLES.EDITOR].includes(user.role)
+  return !!user && [ROLES.ADMIN, ROLES.MASTER, ROLES.EDITOR].includes(user.role_id)
 }
 
 function canViewElement(user, el) {
@@ -91,8 +86,7 @@ module.exports = {
   canViewDoc,
   canEditDoc,
   canDeleteDoc,
-  canPublishDoc,
-  canAssignEditor,
+  canAssignRights,
   canCreateElement,
   canViewElement,
   canUseElement,

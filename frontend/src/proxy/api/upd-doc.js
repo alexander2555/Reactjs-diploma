@@ -1,4 +1,3 @@
-// интеграция: прежний запрос через json-server (порт 3000)
 // export const updDoc = (id, docData) =>
 //   fetch(`${API_URL}documents/${id}`, {
 //     method: 'PATCH',
@@ -18,7 +17,7 @@
 //       return null
 //     })
 
-import { apiRequest } from '../../utils/api'
+import { apiRequest } from '../../utils/api-request'
 
 export const updDoc = (id, docData) =>
   apiRequest(`documents/${id}`, {
