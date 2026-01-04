@@ -110,6 +110,4 @@ JWT хранится в cookie; проверка — через middleware `auth
 - Frontend: `npm run build` → директория `dist`
 - Backend: `npm start` (использует `process.env.DB_CONN_STRING`)
 
-## Авторство
-
 © 2025 Alexander Mamontov
