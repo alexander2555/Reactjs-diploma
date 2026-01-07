@@ -3,13 +3,14 @@ import { useEffect } from 'react'
 export const useResizeObserver = (
   canvasRef,
   isLoading,
+  error,
   setStageSize,
   currPointerPosition,
   setScale,
   docSize,
 ) => {
   useEffect(() => {
-    if (!canvasRef.current && isLoading) {
+    if ((!canvasRef.current && isLoading) || error) {
       console.warn('Canvas not found in DOM!')
       return
     }
@@ -40,5 +41,5 @@ export const useResizeObserver = (
     resizeObserver.observe(canvasRef.current)
 
     return () => resizeObserver?.disconnect()
-  }, [isLoading])
+  }, [isLoading, error])
 }

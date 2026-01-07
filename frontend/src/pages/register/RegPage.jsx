@@ -90,7 +90,7 @@ export const RegPage = () => {
         label='Роль'
         options={[
           [1, 'Мастер'],
-          [2, 'Пользователь'],
+          [2, 'Редактор'],
         ]}
         {...register('role')}
         disabled={isPending}

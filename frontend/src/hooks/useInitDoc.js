@@ -15,7 +15,7 @@ export const useInitDoc = docId => {
   const roleId = useSelector(selectUserRole)
 
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState([])
+  const [error, setError] = useState('')
 
   const prepDocPageData = useCallback(
     async isCancelled => {
@@ -42,7 +42,8 @@ export const useInitDoc = docId => {
         if (!isCancelled) setIsLoading(false)
       } catch (err) {
         if (isCancelled) return
-        setError(err.message)
+        setError(`[API] ${err.message}`)
+      } finally {
         setIsLoading(false)
       }
     },

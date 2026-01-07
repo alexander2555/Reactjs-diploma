@@ -1,4 +1,4 @@
-# Result University Diploma Project | Web Collage App | Backend
+# Result University Diploma Project | CollageWeb | Backend
 
 ## API Endpoints
 
@@ -62,4 +62,4 @@ npm run serve
 
 ---
 
-&copy; 2025 Alexander Mamontov <alexander2555@yandex.ru>
+© 2025 Alexander Mamontov <alexander2555@yandex.ru>

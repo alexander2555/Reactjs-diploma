@@ -28,7 +28,7 @@ router.post('/login', async (req, res) => {
   try {
     const { user, token } = await login(req.body.login, req.body.password)
 
-    res.cookie('token', token, cookieOptions).send(mapUser(user))
+    res.cookie('token', token, cookieOptions).status(200).send(mapUser(user))
   } catch (err) {
     res.status(401).send({ error: err.message || 'Unknown error' })
   }
@@ -45,7 +45,7 @@ router.get('/me', async (req, res) => {
 
     const user = await User.findById(id).lean()
 
-    res.send(mapUser(user))
+    res.status(200).send(mapUser(user))
   } catch (err) {
     res.status(401).send({ error: err.message || 'Unknown error' })
   }

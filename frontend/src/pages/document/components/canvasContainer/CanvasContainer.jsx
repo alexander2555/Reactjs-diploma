@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Navigate } from 'react-router-dom'
 
 import { Stage, Layer, Rect } from 'react-konva'
 import { useResizeObserver } from '../../../../hooks/useResizeObserver'
@@ -24,7 +25,7 @@ export const CanvasContainer = ({ className }) => {
   const doc = useSelector(selectDocument)
   const graphicsLib = useSelector(selectGraphicsLib)
 
-  const { stageRef, draggingImgRef, isLoading } = useDocEnvironment()
+  const { stageRef, draggingImgRef, isLoading, error } = useDocEnvironment()
   const { libLoading, setLibLoading, libError, setLibError, libRef } = useLibrary()
 
   const canvasRef = useRef(null)
@@ -120,11 +121,17 @@ export const CanvasContainer = ({ className }) => {
   useResizeObserver(
     canvasRef,
     isLoading,
+    error,
     setStageSize,
     setStagePosition,
     setScale,
     doc.size,
   )
+
+  if (error) {
+    console.warn(error)
+    return <Navigate to='/' replace={true} />
+  }
 
   return isLoading && libLoading ? (
     <Loader local={true} message={'Загрузка'} />

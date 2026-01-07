@@ -12,22 +12,31 @@ const {
 const { mapDoc, mapDocEl } = require('../helpers/map')
 
 const getDocuments = async (req, res) => {
-  const documents = await Document.find().lean()
-  const filtered = documents.filter(doc => canViewDoc(req.user, doc))
+  try {
+    const documents = await Document.find().lean()
+    const filtered = documents.filter(doc => canViewDoc(req.user, doc))
 
-  res.send(filtered.map(mapDoc))
+    res.status(200).send(filtered.map(mapDoc))
+  } catch (e) {
+    res.status(400).send({ error: e.message })
+  }
 }
 
 const getDocumentById = async (req, res) => {
-  const document = await Document.findOne({ _id: req.params.id }).lean()
+  try {
+    const document = await Document.findById(req.params.id).lean()
 
-  if (!document) return res.status(404).send({ error: 'Document not found' })
+    if (!document) return res.status(404).send({ error: 'Document not found' })
 
-  if (!canViewDoc(req.user, document)) return res.status(403).send({ error: 'Forbidden' })
+    if (!canViewDoc(req.user, document))
+      return res.status(403).send({ error: 'Forbidden' })
 
-  const docEls = await Doc_el.find({ doc_id: document._id }).lean()
+    const docEls = await Doc_el.find({ doc_id: document._id }).lean()
 
-  res.send(mapDoc({ ...document, elements: docEls.map(mapDocEl) }))
+    res.status(200).send(mapDoc({ ...document, elements: docEls.map(mapDocEl) }))
+  } catch (e) {
+    res.status(400).send({ error: e.message })
+  }
 }
 
 const createDocument = async (req, res) => {
@@ -123,7 +132,7 @@ const updateDocument = async (req, res) => {
     }
 
     const docEls = await Doc_el.find({ doc_id: doc.id }).lean()
-    res.send(mapDoc({ ...updatedDoc, elements: docEls.map(mapDocEl) }))
+    res.status(200).send(mapDoc({ ...updatedDoc, elements: docEls.map(mapDocEl) }))
   } catch (e) {
     res.status(400).send({ error: e.message })
   }

@@ -20,13 +20,13 @@ export const DocEnvProvider = ({ children }) => {
   const draggingImgRef = useRef(null)
 
   // Инициализация библиотеки и холста документа
-  const { isLoading } = useInitDoc(docId)
+  const { isLoading, error } = useInitDoc(docId)
 
   // Выделение элементов
   const [selectedEl, setSelectedEl] = useState(null)
 
   return (
-    <DocumentContext value={{ stageRef, draggingImgRef, isLoading }}>
+    <DocumentContext value={{ stageRef, draggingImgRef, isLoading, error }}>
       <SelectContext value={{ selectedEl, setSelectedEl }}>{children}</SelectContext>
     </DocumentContext>
   )

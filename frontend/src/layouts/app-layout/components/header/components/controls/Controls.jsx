@@ -49,7 +49,7 @@ export const Controls = ({ className, isDocPage }) => {
   const onSignOut = () => {
     dispatch(closeSession())
     dispatch(setPending(false))
-    nav('/', { replace: true })
+    nav('/', { replace: true, state: { from: '/' } })
   }
 
   return (

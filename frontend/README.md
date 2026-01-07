@@ -1,4 +1,4 @@
-# Result University Diploma Project | Web Collage App
+# Result University Diploma Project | CollageWeb
 
 ### Сущности
 
@@ -64,4 +64,4 @@ _Стор на клиенте_:
 
 ---
 
-&copy; 2025 Alexander Mamontov
+© 2025 Alexander Mamontov <alexander2555@yandex.ru>

@@ -6,9 +6,9 @@ const { canEditDoc } = require('../helpers/access')
 const { mapDocEl } = require('../helpers/map')
 
 const getDocEls = async (req, res) => {
-  const { doc_id, el_id } = req.query
+  const { el_id } = req.query
 
-  const filter = { doc_id, el_id }
+  const filter = { el_id }
 
   const docEls = await Doc_el.find(filter).lean()
   res.status(200).send(docEls.map(mapDocEl))
