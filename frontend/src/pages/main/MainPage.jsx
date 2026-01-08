@@ -43,8 +43,9 @@ export const MainPage = () => {
         const docs = (res || [])
           .map(doc => {
             const isRemovable =
-              checkAccess([ROLE.ADMIN], roleId) || doc.owner_id === userId
-            const isEditable = isRemovable || doc.editor_id === userId
+              userId && (checkAccess([ROLE.ADMIN], roleId) || doc.owner_id === userId)
+            const isEditable = userId && (isRemovable || doc.editor_id === userId)
+
             if (isEditable || doc.public) {
               return {
                 ...doc,
@@ -60,7 +61,7 @@ export const MainPage = () => {
         setError(null)
         setDocuments(docs)
       } catch (err) {
-        setError(err.message)
+        setError(`[API] ${err.message}`)
         setDocuments([])
       } finally {
         setIsLoading(false)
@@ -85,18 +86,7 @@ export const MainPage = () => {
     setError(err)
 
     if (!err) {
-      setDocuments(prev =>
-        prev
-          .filter(d => d.id !== selectedDocId)
-          .map(d => ({
-            ...d,
-            editable:
-              checkAccess([ROLE.ADMIN], roleId) ||
-              d.owner_id === userId ||
-              d.editor_id === userId,
-            removable: checkAccess([ROLE.ADMIN], roleId) || d.owner_id === userId,
-          })),
-      )
+      setDocuments(prev => prev.filter(d => d.id !== selectedDocId))
       setSelectedDocId(null)
     }
 

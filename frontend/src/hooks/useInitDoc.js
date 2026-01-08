@@ -28,8 +28,9 @@ export const useInitDoc = docId => {
         if (isCancelled) return
 
         // Уровень доступа к документу
-        const removable = checkAccess([ROLE.ADMIN], roleId) || resDoc.owner_id === userId
-        const editable = removable || resDoc.editor_id === userId
+        const removable =
+          userId && (checkAccess([ROLE.ADMIN], roleId) || resDoc.owner_id === userId)
+        const editable = userId && (removable || resDoc.editor_id === userId)
         // Диспатч документа в стор
         dispatch(
           setDocData({

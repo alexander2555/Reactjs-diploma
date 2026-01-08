@@ -1,6 +1,6 @@
 {
   "name": "Web Collage App | Backend",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
