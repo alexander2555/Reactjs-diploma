@@ -41,16 +41,18 @@ export const LeftPanel = () => {
   const handleFileSelect = ({ target }) => {
     const file = target.files[0]
 
-    if (!file.type.match('image/(png|jpg|jpeg)')) {
+    if (!file?.type.match('image/(png|jpg|jpeg)')) {
       setLibError(
         'Выбранный файл не соответствует требуемому формату. Выберите PNG или JPG файл',
       )
+      setSelectedGraphicsFile(null)
       return
     }
 
     const maxSize = 50 * 1024 * 1024 // 50MB
     if (file.size > maxSize) {
       setLibError('Размер файла не должен превышать 50MB.')
+      setSelectedGraphicsFile(null)
       return
     }
 

@@ -11,6 +11,7 @@ export const DEFAULT_DOC = {
   changed: false,
   size: { width: 800, height: 1000 },
   bg_color: Object.keys(color)[0],
+  preview: null,
 }
 
 export const DEFAULT_DOC_ELEMENT = {

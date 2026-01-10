@@ -12,8 +12,9 @@ const DocumentSchema = new mongoose.Schema(
       width: { type: Number, default: 800 },
       height: { type: Number, default: 1000 },
     },
+    preview: { type: String, default: null },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 module.exports = mongoose.model('Document', DocumentSchema)

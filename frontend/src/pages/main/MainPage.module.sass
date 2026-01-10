@@ -17,7 +17,7 @@
     $item: &
 
     &__sheet
-      // aspect-ratio: 297 / 210
+      position: relative
       aspect-ratio: 1
       height: 100%
       width: 100%
@@ -25,6 +25,7 @@
       margin: auto
       border: 1px solid var(--text-color)
       border-radius: 1em
+      overflow: hidden
       transition: background-color .3s
 
       display: flex
@@ -36,6 +37,7 @@
         background-color: rgba( 255, 255, 255, .2 )
 
     &__title
+      position: relative
       margin-bottom: .5rem
       text-align: center
       white-space: nowrap
@@ -44,6 +46,28 @@
     &__description
       margin-top: auto
       margin-bottom: 0
+
+    &__icon
+      display: block
+      position: absolute
+      top: 0
+      left: 0
+      bottom: 0
+      width: 100%
+      height: 4rem
+      line-height: 4rem
+      margin: auto
+      font-size: 4rem
+      text-align: center
+      color: var(--text-color)
+
+    &__preview
+      position: absolute
+      top: 0
+      left: 0
+      object-fit: contain
+      width: 100%
+      height: auto
 
 .btn
   &-del
