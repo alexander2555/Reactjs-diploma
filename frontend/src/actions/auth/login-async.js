@@ -4,7 +4,7 @@ import { apiRequest } from '../../utils'
 import { mapUser } from '../../helpers'
 
 export const loginAsync =
-  ({ login, password }) =>
+  ({ login, password }, resetForm) =>
   async dispatch => {
     dispatch(setPending(true))
     try {
@@ -15,6 +15,7 @@ export const loginAsync =
 
       const loggedInUser = mapUser(user)
 
+      resetForm()
       dispatch(setAuthError(null))
       dispatch(setSession(loggedInUser))
     } catch (err) {

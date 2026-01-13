@@ -16,20 +16,30 @@ export async function apiRequest(path, options = {}) {
     fetchOptions.body = JSON.stringify(body)
   }
 
-  const resp = await fetch(`${API_URL}${path}`, fetchOptions)
-
-  let data = null
+  let response
   try {
-    data = await resp.json()
-  } catch (_) {
+    response = await fetch(`${API_URL}${path}`, fetchOptions)
+  } catch (err) {
+    throw new Error(`[FETCH] ${err.message}`)
+  }
+
+  if (
+    response.status === 204 ||
+    response.status === 304 ||
+    response.headers.get('content-length') === '0'
+  )
+    return
+
+  let data
+  try {
+    data = await response.json()
+  } catch (err) {
     data = null
+    if (response.ok) throw new Error(err.message)
+    throw new Error(response.statusText)
   }
 
-  const error = data && data.error ? data.error : null
-
-  if (!resp.ok || error) {
-    throw new Error(error || resp.statusText)
-  }
+  if (!response.ok) throw new Error(data.error || response.statusText)
 
   return data
 }

@@ -5,19 +5,19 @@ const UserSchema = mongoose.Schema(
   {
     login: {
       type: String,
-      require: true,
+      required: true,
       unique: true,
     },
     password: {
       type: String,
-      require: true,
+      required: true,
     },
     role_id: {
       type: Number,
       default: roles.GUEST,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 )
 
 const User = mongoose.model('User', UserSchema)

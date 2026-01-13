@@ -29,8 +29,8 @@ const createDocEl = async (req, res) => {
       doc_id,
       el_id,
       ...req.body,
-    }).lean()
-    res.status(201).send(mapDocEl(newDocEl))
+    })
+    res.status(201).send(mapDocEl(newDocEl.toObject()))
   } catch (e) {
     res.status(400).send({ error: e.message })
   }

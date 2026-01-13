@@ -54,12 +54,11 @@ export const AuthPage = () => {
   }
 
   const onSubmit = loginCredentials => {
-    dispatch(loginAsync(loginCredentials))
-    reset()
+    dispatch(loginAsync(loginCredentials, reset))
   }
 
   const handleInputChange = () => {
-    if (error) () => dispatch(setAuthError(null))
+    if (error) dispatch(setAuthError(null))
   }
 
   const formError = errors?.login || errors?.password || errors?.passCheck

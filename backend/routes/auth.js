@@ -41,7 +41,7 @@ router.get('/me', async (req, res) => {
     if (!token) {
       throw new Error('[ME] New user login required')
     }
-    const { id } = verify(token, process.env.JWT_SECRET)
+    const { id } = verify(token)
 
     const user = await User.findById(id).lean()
 

@@ -59,8 +59,8 @@ const updateElement = async (req, res) => {
 
     const updatedEl = await Element.findOneAndUpdate({ _id: req.params.id }, req.body, {
       new: true,
-    })
-    res.status(200).send(mapEl(updatedEl.toObject()))
+    }).lean()
+    res.status(200).send(mapEl(updatedEl))
   } catch (e) {
     res.status(400).send({ error: e.message })
   }

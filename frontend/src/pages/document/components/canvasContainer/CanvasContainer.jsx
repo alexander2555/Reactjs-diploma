@@ -70,7 +70,7 @@ export const CanvasContainer = ({ className }) => {
       x: (pointer.x - stagePos.x) / oldScale,
       y: (pointer.y - stagePos.y) / oldScale,
     }
-    const newScale = (evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy).toFixed(1)
+    const newScale = (evt.deltaY > 0 ? oldScale * scaleBy : oldScale / scaleBy).toFixed(2)
     setScale(Number(newScale))
     setStagePosition({
       x: pointer.x - currPointerPosition.x * newScale,
